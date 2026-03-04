@@ -11,15 +11,15 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### Natalia Zhao
+### John Doe
 
-<img src="images/petelectron.png" width="200px">
+<img src="images/johndoe.png" width="200px">
 
-[[homepage]()]
-[[github](https://github.com/petelectron)]
-[[portfolio]()]
+[[homepage](http://www.comp.nus.edu.sg/~damithch)]
+[[github](https://github.com/johndoe)]
+[[portfolio](team/johndoe.md)]
 
-* Role: Team Member
+* Role: Project Advisor
 
 ### Jane Doe
 
