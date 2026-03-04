@@ -11,15 +11,23 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### John Doe
+### Natalia Zhao
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/petelectron.png" width="200px">
 
-[[homepage](http://www.comp.nus.edu.sg/~damithch)]
-[[github](https://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/petelectron)]
 
-* Role: Project Advisor
+* Role: Team Member
+
+### Gao Wei Jie
+
+<img src="images/emperorgaodi.png" width="200px">
+
+[[github](http://github.com/emperorgaodi)]
+[[portfolio]()]
+
+* Role: Developer
+* Responsibilities: -
 
 ### Ruben Teo
 
@@ -31,15 +39,6 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Team Lead
 * Responsibilities: -
 
-### Johnny Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Data
-
 ### Jean Doe
 
 <img src="images/johndoe.png" width="200px">
@@ -50,12 +49,10 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Dev Ops + Threading
 
-### James Doe
+### Hoang Tuan Minh
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/moonmertens.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/moonmertens)]
 
-* Role: Developer
-* Responsibilities: UI
+* Role: Team Member
