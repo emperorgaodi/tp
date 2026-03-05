@@ -317,7 +317,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 (For all use cases below, the **System** is the `HRManager` and the **Actor** is the `user`, unless specified otherwise)
 
 **Use case: UC5 Tag an employee**
-**Actor: User**
 **Preconditions: There are users in the HRManager**
 **Gurantees: Employee is updated with the new tag**
 
