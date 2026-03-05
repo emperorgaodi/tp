@@ -355,7 +355,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 1b1. System displays an error message "Error: Employee (data) not found.
       Use case ends.
 
-**Use case 3 (UC3): View employees *
+**Use case 3 (UC3): View employees**
 
 **MSS**
 
@@ -390,7 +390,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Use case ends.
 
 **Use case 5 (UC5): Tag an employee**
+
 **Preconditions: There are users in the HRManager**
+
 **Guarantees: Employee is updated with the new tag**
 
 **MSS**
@@ -425,7 +427,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       Use case ends.
 
 **Use case: UC6 - Edit an employee's details**
+
 **Preconditions: Employee to be edited exists in the list**
+
 **Guarantees: Employee's details will be edited to what the user entered**
 
 **MSS**
