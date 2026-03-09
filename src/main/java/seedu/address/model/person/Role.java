@@ -22,7 +22,7 @@ public class Role {
     /**
      * Constructs a {@code Role}.
      *
-     * @param role A valid address.
+     * @param role A valid role.
      */
     public Role(String role) {
         requireNonNull(role);

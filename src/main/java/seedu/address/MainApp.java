@@ -61,8 +61,8 @@ public class MainApp extends Application {
 
     /**
      * Returns a {@code ModelManager} with the data from {@code storage}'s hrmanager and {@code userPrefs}. <br>
-     * The data from the sample hrmanager will be used instead if {@code storage}'s address book is not found,
-     * or an empty hrmanager will be used instead if errors occur when reading {@code storage}'s address book.
+     * The data from the sample hrmanager will be used instead if {@code storage}'s hrmanager is not found,
+     * or an empty hrmanager will be used instead if errors occur when reading {@code storage}'s hrmanager.
      */
     private Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
         logger.info("Using data file : " + storage.getHrmanagerFilePath());
