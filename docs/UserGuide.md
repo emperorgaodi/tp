@@ -59,7 +59,7 @@ HRmanager is a **desktop app for managing employee and applicant records, optimi
   e.g. `[t/TAG]…​` can be used as ` ` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
 
 * Parameters can be in any order, except NAME.<br>
-  e.g. if the command specifies `r/EMAIL p/PHONE_NUMBER`, `p/PHONE_NUMBER n/EMAIL` is also acceptable.
+  e.g. if the command specifies `e/EMAIL p/PHONE_NUMBER`, `p/PHONE_NUMBER e/EMAIL` is also acceptable.
 
 * Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be ignored.<br>
   e.g. if the command specifies `help 123`, it will be interpreted as `help`.
