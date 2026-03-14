@@ -22,7 +22,7 @@ HRmanager is a **desktop app for managing employee and applicant records, optimi
 
 1. Copy the file to the folder you want to use as the _home folder_ for HRmanager.
 
-1. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar addressbook.jar` command to run the application.<br>
+1. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar HRmanager.jar` command to run the application.<br>
    A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![Ui](images/Ui.png)
 
@@ -50,19 +50,22 @@ HRmanager is a **desktop app for managing employee and applicant records, optimi
 **Notes about the command format:**<br>
 
 * Words in `UPPER_CASE` are the parameters to be supplied by the user.<br>
-  e.g. in `add n/NAME`, `NAME` is a parameter which can be used as `add n/John Doe`.
+  e.g. in `add NAME`, `NAME` is a parameter which can be used as `add John Doe`.
 
 * Items in square brackets are optional.<br>
-  e.g `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+  e.g `NAME [t/TAG]` can be used as `John Doe t/friend` or as `John Doe`.
 
 * Items with `…`​ after them can be used multiple times including zero times.<br>
   e.g. `[t/TAG]…​` can be used as ` ` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
 
-* Parameters can be in any order.<br>
-  e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+* Parameters can be in any order, except NAME.<br>
+  e.g. if the command specifies `r/EMAIL p/PHONE_NUMBER`, `p/PHONE_NUMBER n/EMAIL` is also acceptable.
 
 * Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be ignored.<br>
   e.g. if the command specifies `help 123`, it will be interpreted as `help`.
+
+* Tag constraints: Tags must be **alphanumeric** (only letters and numbers) and **between 1 to 50 characters long**. Tags are **case-sensitive**.<br>
+  e.g. `t/HR`, `t/Department123` are valid; `t/HR Department` (contains space), `t/HR!`(contains special character), and tags longer than 50 characters are invalid.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
@@ -80,7 +83,7 @@ Format: `help`
 
 Adds an employee to HRmanager.
 
-Format: `add NAME e/EMAIL p/PHONE r/ROLE [t/TAG]…​`
+Format: `add NAME e/EMAIL p/PHONE_NUMBER r/ROLE [t/TAG]…​`
 
 <box type="tip" seamless>
 
@@ -88,8 +91,8 @@ Format: `add NAME e/EMAIL p/PHONE r/ROLE [t/TAG]…​`
 </box>
 
 Examples:
-* `add John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+* `add John Doe e/johnd@example.com p/98765432 r/Receptionist`
+* `add Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director p/1234567 t/criminal`
 
 ### Listing all employees : `list`
 
@@ -101,10 +104,11 @@ Format: `list`
 
 Edits an existing employee in HRmanager.
 
-Format: `edit INDEX [NAME] [p/PHONE] [e/EMAIL] [a/ROLE] [t/TAG]…​`
+Format: `edit INDEX [NAME] [p/PHONE] [e/EMAIL] [r/ROLE] [t/TAG]…​`
 
 * Edits the employee at the specified `INDEX`. The index refers to the index number shown in the displayed employee list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
+* Each optional field accepts at most 1 updated value, i.e. no duplicate fields.
 * Existing values will be updated to the input values.
 * When editing tags, the existing tags of the employee will be removed i.e. adding of tags is not cumulative.
 * You can remove all the employee's tags by typing `t/` without
@@ -138,17 +142,19 @@ Examples:
 
 ### Deleting an employee : `delete`
 
-Deletes the specified employee from HRmanager.
+Deletes one or more employees from the list using their displayed index numbers.
 
-Format: `delete INDEX`
+Format: `delete INDEX [MORE_INDEXES]`
 
-* Deletes the employee at the specified `INDEX`.
+* Deletes the employee(s) at the specified `INDEX`.
 * The index refers to the index number shown in the displayed employee list.
 * The index **must be a positive integer** 1, 2, 3, …​
+* Multiple indexes can be provided to delete multiple employees in one command.
 
 Examples:
 * `list` followed by `delete 2` deletes the 2nd employee in HRmanager.
 * `search Betsy` followed by `delete 1` deletes the 1st employee in the results of the `search` command.
+* `delete 1 3 5` deletes the 1st, 3rd, and 5th employees in the displayed list.
 
 ### Clearing all entries : `clear`
 
@@ -201,7 +207,7 @@ _Details coming soon ..._
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add**    | `add NAME p/PHONE_NUMBER e/EMAIL r/ROLE [t/TAG]…​` <br> e.g., `add James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add**    | `add NAME p/PHONE_NUMBER e/EMAIL r/ROLE [t/TAG]…​` <br> e.g., `add James Ho p/22224444 e/jamesho@example.com r/Software Engineer t/friend t/colleague`
 **Clear**  | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit**   | `edit INDEX [NAME] [p/PHONE_NUMBER] [e/EMAIL] [r/ROLE] [t/TAG]…​`<br> e.g.,`edit 2 James Lee e/jameslee@example.com`
