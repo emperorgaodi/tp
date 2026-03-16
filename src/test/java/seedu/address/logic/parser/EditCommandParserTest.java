@@ -121,6 +121,11 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_blankNameAfterIndex_failure() {
+        assertParseFailure(parser, "1     ", EditCommand.MESSAGE_NOT_EDITED);
+    }
+
+    @Test
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND_PERSON;
         String userInput = targetIndex.getOneBased() + NAME_DESC_AMY + PHONE_DESC_BOB + TAG_DESC_HUSBAND
