@@ -4,13 +4,12 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.SearchCommand;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.PersonMatchesKeywordPredicate;
 
 public class SearchCommandParserTest {
 
@@ -29,9 +28,14 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void parse_tooManyKeywords_throwsParseException() {
-        String tooManyKeywords = String.join(" ", Collections.nCopies(SearchCommand.MAX_KEYWORD_COUNT + 1, "a"));
-        assertParseFailure(parser, tooManyKeywords,
+    public void parse_multipleKeywords_throwsParseException() {
+        assertParseFailure(parser, "Alice Bob",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, SearchCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_nonAlphanumericKeyword_throwsParseException() {
+        assertParseFailure(parser, "Alice-123",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, SearchCommand.MESSAGE_USAGE));
     }
 
@@ -39,28 +43,24 @@ public class SearchCommandParserTest {
     public void parse_maxKeywordLength_returnsSearchCommand() {
         String maxLengthKeyword = "a".repeat(SearchCommand.MAX_KEYWORD_LENGTH);
         SearchCommand expectedSearchCommand =
-                new SearchCommand(new NameContainsKeywordsPredicate(Arrays.asList(maxLengthKeyword)));
+                new SearchCommand(new PersonMatchesKeywordPredicate(Collections.singletonList(maxLengthKeyword)));
         assertParseSuccess(parser, maxLengthKeyword, expectedSearchCommand);
     }
 
     @Test
-    public void parse_maxKeywordCount_returnsSearchCommand() {
-        String validInput = String.join(" ", Collections.nCopies(SearchCommand.MAX_KEYWORD_COUNT, "a"));
+    public void parse_alphanumericKeyword_returnsSearchCommand() {
+        String validInput = "Alice123";
         SearchCommand expectedSearchCommand =
-                new SearchCommand(new NameContainsKeywordsPredicate(Collections.nCopies(SearchCommand.MAX_KEYWORD_COUNT,
-                        "a")));
+                new SearchCommand(new PersonMatchesKeywordPredicate(Collections.singletonList(validInput)));
         assertParseSuccess(parser, validInput, expectedSearchCommand);
     }
 
     @Test
     public void parse_validArgs_returnsSearchCommand() {
-        // no leading and trailing whitespaces
         SearchCommand expectedSearchCommand =
-                new SearchCommand(new NameContainsKeywordsPredicate(Arrays.asList("Alice", "Bob")));
-        assertParseSuccess(parser, "Alice Bob", expectedSearchCommand);
-
-        // multiple whitespaces between keywords
-        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedSearchCommand);
+                new SearchCommand(new PersonMatchesKeywordPredicate(Collections.singletonList("Alice")));
+        assertParseSuccess(parser, "Alice", expectedSearchCommand);
+        assertParseSuccess(parser, "  \n Alice \t  ", expectedSearchCommand);
     }
 
 }
