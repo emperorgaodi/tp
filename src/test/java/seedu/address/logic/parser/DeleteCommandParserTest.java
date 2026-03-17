@@ -31,7 +31,8 @@ public class DeleteCommandParserTest {
 
     @Test
     public void parse_multipleValidArgs_returnsDeleteCommand() {
-        assertParseSuccess(parser, "1 2 3", new DeleteCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON, INDEX_THIRD_PERSON)));
+        assertParseSuccess(parser, "1 2 3", new DeleteCommand(
+            List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON, INDEX_THIRD_PERSON)));
     }
 
     @Test
