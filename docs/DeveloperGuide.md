@@ -362,9 +362,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to remove a person by passing the target employee's details
-2.  System removes the person from the records.
-3.  System displays confirmation message.
+1. User requests to remove one or more employees by specifying their index numbers in the displayed list.
+2. System validates the provided index numbers.
+3. System removes the corresponding employee records from the system.
+4. System displays a confirmation message indicating the number of employees deleted.
 
     Use case ends.
 
@@ -377,8 +378,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
     Use case resumes from step 2.
 
-* 1b. System detects that there is no such matching employee in the list.
-    * 1b1. System displays an error message "Error: Employee (data) not found.
+* 2a. One or more indexes are invalid (e.g., index exceeds list size).
+    * 2a1. System displays an error message indicating the invalid index.
     
     Use case ends.
 
@@ -475,9 +476,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **MSS**
 
 1. User requests to edit employee details.
-2. System searches for the employee (UC4).
+2. System retrieves the employee based on user's provided index.
 3. User enters the details to be updated.
-4. System edits the employee's details, and displays the updated employee information.
+4. System updates the employee's details accordingly, and displays the updated employee information.
 
 **Extensions**
 
@@ -486,9 +487,19 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       
     Use case resumes at step 1.
 
+* 2a. The user entered an invalid index.
+  * 2a1. System shows an error message.
+  
+    Use case resumes at step 1.
+
 * 3a. User's given details are invalid.
     * 3a1. System shows an error message.
       
+    Use case resumes at step 3.
+
+* 3b. User enters empty details.
+  * 3b1. System shows an error message.
+  
     Use case resumes at step 3.
 
 
@@ -553,7 +564,7 @@ testers are expected to do more *exploratory* testing.
 
 ### Deleting a person
 
-1. Deleting a person while all persons are being shown
+1. Deleting one or more persons while all persons are being shown
 
    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
 
