@@ -2,7 +2,6 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -175,7 +174,7 @@ public class DeleteCommandTest {
         Person personToDelete3 = personList.get(INDEX_THIRD_PERSON.getZeroBased());
 
         // Pass multiple indexes with some duplicates (4 indexes, but only 3 unique)
-        DeleteCommand deleteCommand = new DeleteCommand(List.of(INDEX_THIRD_PERSON, INDEX_FIRST_PERSON, 
+        DeleteCommand deleteCommand = new DeleteCommand(List.of(INDEX_THIRD_PERSON, INDEX_FIRST_PERSON,
                 INDEX_SECOND_PERSON, INDEX_FIRST_PERSON));
 
         // Duplicates are filtered out, so message correctly reports 3 unique employees deleted
