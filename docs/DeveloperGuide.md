@@ -103,7 +103,7 @@ How the `Logic` component works:
 
 1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
+1. The command can communicate with the `Model` when it is executed (e.g. to delete an employee).<br>
    Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`.
 
@@ -176,11 +176,11 @@ Step 1. The user launches the application for the first time. The `VersionedAddr
 
 <puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
 
-Step 2. The user executes `delete 5` command to delete the 5th person in the HRmanager. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the HRmanager after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted HRmanager state.
+Step 2. The user executes `delete 5` command to delete the 5th employee in the HRmanager. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the HRmanager after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted HRmanager state.
 
 <puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
 
-Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified HRmanager state to be saved into the `addressBookStateList`.
+Step 3. The user executes `add n/David …​` to add a new employee. The `add` command also calls `Model#commitAddressBook()`, causing another modified HRmanager state to be saved into the `addressBookStateList`.
 
 <puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
 
@@ -190,7 +190,7 @@ Step 3. The user executes `add n/David …​` to add a new person. The `add` co
 
 </box>
 
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous HRmanager state, and restores the HRmanager to that state.
+Step 4. The user now decides that adding an employee was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous HRmanager state, and restores the HRmanager to that state.
 
 <puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3" />
 
@@ -246,7 +246,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 * **Alternative 2:** Individual command knows how to undo/redo by
   itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
+  * Pros: Will use less memory (e.g. for `delete`, just save an employee being deleted).
   * Cons: We must ensure that the implementation of each individual command are correct.
 
 _{more aspects and alternatives to be added}_
@@ -342,8 +342,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to add a person by adding employee details.
-2.  System adds the person to the records.
+1.  User requests to add an employee by adding employee details.
+2.  System adds an employee to the records.
 3.  System displays confirmation message.
 
     Use case ends.
@@ -439,7 +439,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3. User requests to tag a specific employee in the list.
 4. System requests for the tag name.
 5. User provides tag name.
-6. System adds the tag to the person and updates the list
+6. System adds the tag to an employee and updates the list
    
    Use case ends.
 
@@ -455,7 +455,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
       
     Use case resumes at step 1.
 
-* 5a. The tag name provided is already associated with this person.
+* 5a. The tag name provided is already associated with this employee.
     * 5a1. System shows an error message indicating the tag is a duplicate.
       
     Use case resumes at step 2.
@@ -562,11 +562,11 @@ testers are expected to do more *exploratory* testing.
 
 1. _{ more test cases …​ }_
 
-### Deleting a person
+### Deleting an employee
 
-1. Deleting one or more persons while all persons are being shown
+1. Deleting one or more employee while all employees are being shown
 
-   1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
+   1. Prerequisites: List all employee using the `list` command. Multiple employees in the list.
 
    2. Test case: `delete 1`<br>
       Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
@@ -578,39 +578,77 @@ testers are expected to do more *exploratory* testing.
       Expected: Duplicate indexes are ignored. Contacts 2 and 3 are deleted once.
 
    5. Test case: `delete 0`<br>
-      Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
+      Expected: No employee is deleted. Error details shown in the status message. Status bar remains the same.
 
    6. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
-### Tagging a person
+### Tagging an employee
 
-1. Tagging a person with valid tags
+1. Tagging an employee with valid tags
 
-    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
+   1. Prerequisites: List all employees using the `list` command. Multiple employees in the list.
 
    2. Test case: `tag 1 t/HR`<br>
-       Expected: First person is tagged with "HR". Success message shown in the status message.
+      Expected: First employees is tagged with "HR". Success message shown in the status message.
 
    3. Test case: `tag 1 t/HR t/Manager`<br>
-       Expected: First person is tagged with both "HR" and "Manager". Success message shown.
+      Expected: First employee is tagged with both "HR" and "Manager". Success message shown.
 
    4. Test case: `tag 2 t/` (empty tag)<br>
-       Expected: No tag is added. Error details shown: "Tags names should be alphanumeric and between 1 to 50 characters long".
+      Expected: No tag is added. Error details shown: "Tags names should be alphanumeric and between 1 to 50 characters long".
 
    5. Test case: `tag 2 t/HR_Department` (contains underscore)<br>
-       Expected: No tag is added. Error details shown due to non-alphanumeric character.
+      Expected: No tag is added. Error details shown due to non-alphanumeric character.
 
    6. Test case: `tag 2 t/[a string of 51 characters]`<br>
-       Expected: No tag is added. Error details shown due to exceeding 50-character limit.
+      Expected: No tag is added. Error details shown due to exceeding 50-character limit.
 
-   7. Test case: `tag 2 t/HR` (when person already has "HR" tag)<br>
-       Expected: No duplicate tag is added. Error details shown indicating duplicate tag.
+   7. Test case: `tag 2 t/HR` (when employee already has "HR" tag)<br>
+      Expected: No duplicate tag is added. Error details shown indicating duplicate tag.
 
    8. Other incorrect tag commands to try: `tag`, `tag x t/HR` (where x is larger than list size), `tag 1` (no tag specified)<br>
-       Expected: Similar error messages shown.
+      Expected: Similar error messages shown.
 
-1. _{ more test cases …​ }_
+### Searching for employees
+
+1. Searching for employees using a keyword
+
+   1. Prerequisites: List all employees using the list command. Multiple employees in the list with various names, phones, emails, addresses, and tags.
+
+   2. Test case: `search John`<br>
+      Expected: All employees whose name contains "John" (case-insensitive) are listed. Status message shows the number of employees listed
+
+   3. Test case: `search 91234567`<br>
+      Expected: All employees whose phone number contains "91234567" are listed. Status message shows the number of employees listed.
+
+   4. Test case: `search example.com`<br>
+      Expected: All employees whose email contains "example.com" are listed. Status message shows the number of employees listed.
+
+   5. Test case: `search HR`<br>
+      Expected: All employees whose tags contain "HR" are listed. Status message shows the number of employees listed.
+
+   6. Test case: `search` (no keyword)<br>
+      Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
+
+   7. Test case: `search ` (blank keyword with spaces)<br>
+      Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
+
+   8. Test case: `search John_123` (contains underscore)<br>
+      Expected: No search is performed. Error details shown due to non-alphanumeric characters in keyword.
+
+   9. Test case: `search [a string of 51 characters]`<br>
+      Expected: No search is performed. Error details shown due to exceeding 50-character limit.
+
+   10. Test case: `search John Doe` (multiple words)<br>
+       Expected: No search is performed. Error details shown indicating that only one keyword is allowed. The command expects a single keyword without spaces.
+
+   11. Test case: `search keywordThatDoesNotMatchAnyEmployee`<br>
+       Expected: Empty list shown. Status message indicates "0 employees listed!".
+
+   12. Other incorrect search commands to try: `search @lphabet`, `search 123!@#`, `search keyword with multiple spaces`<br>
+       Expected: Similar error messages shown due to non-alphanumeric characters or multiple keywords.
+
 
 ### Saving data
 
