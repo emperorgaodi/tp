@@ -25,15 +25,6 @@ test {
     finalizedBy jacocoTestReport
 }
 
-run {
-    // Enable assertions for the application
-    enableAssertions = true
-
-    // Configure logging for the application
-    systemProperty 'java.util.logging.config.file', 'src/main/resources/logging.properties'
-    systemProperty 'java.util.logging.level', 'FINE'
-}
-
 task coverage(type: JacocoReport) {
     sourceDirectories.from files(sourceSets.main.allSource.srcDirs)
     classDirectories.from files(sourceSets.main.output)
