@@ -10,8 +10,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Role {
 
     public static final int MAX_LENGTH = 50;
-    public static final String MESSAGE_CONSTRAINTS = "Role must be within a " + MAX_LENGTH 
-    + " char limit, and consist of alphanumeric or space only. Space cannot be the first character.";
+    public static final String MESSAGE_CONSTRAINTS = "Role must be within a " + MAX_LENGTH
+        + " char limit, and consist of alphanumeric or space only. Space cannot be the first character.";
 
     /*
      * The first character of the address must not be a whitespace,
