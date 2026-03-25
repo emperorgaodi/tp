@@ -82,7 +82,7 @@ Shows a message explaining how to access the help page.
 
 Format: `help`
 
-### Repeat last command
+### Cycle through previous executed commands
 
 You can pre-fill the command box with your last successful command using the **PgUp (up arrow) key** on computer keyboards. This allows users to repeat their last commands without re-typing it in its entirety.
 
