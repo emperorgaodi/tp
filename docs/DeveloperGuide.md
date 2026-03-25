@@ -125,6 +125,7 @@ How the parsing works:
 The `Model` component,
 
 * stores HRmanager's employee records, i.e. all `Person` objects (which are contained in a `UniquePersonList` object).
+* each `Person` stores `Name`, `Phone`, `Email`, `Role`, `Department`, and optional `Tag` values.
 * stores the currently selected `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be observed. The UI can be bound to this list so that it updates automatically when the data changes.
 * stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a `ReadOnlyUserPref` objects.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
@@ -417,7 +418,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to add an employee by adding employee details.
+1.  User requests to add an employee by adding employee details (`name`, `phone`, `email`, `role`, `department`, optional tags).
 2.  System adds an employee to the records.
 3.  System displays confirmation message.
 
@@ -553,7 +554,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. User requests to edit employee details.
 2. System retrieves the employee based on user's provided index.
-3. User enters the details to be updated.
+3. User enters the details to be updated (any of `name`, `phone`, `email`, `role`, `department`, tags).
 4. System updates the employee's details accordingly, and displays the updated employee information.
 
 **Extensions**
@@ -630,8 +631,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * **Mainstream OS**: Windows, Linux, Unix, MacOS
 * **HR Manager**: The primary user of the system who manages employee records using the application.
-* **Employee Record**: A collection of information stored in the system about an employee, such as name, email, phone number, and role.
+* **Employee Record**: A collection of information stored in the system about an employee, such as name, email, phone number, role, and department.
 * **Command Line Interface (CLI)**: A text-based interface where users interact with the application by typing commands.
+* **Department**: The organizational unit an employee belongs to (e.g., `Engineering`, `Finance`, `Human Resources`).
 * **Tag**: A label that can be attached to an employee record for categorization purposes. Tags must be alphanumeric and 1-50 characters in length. Examples include "HR", "Manager", "FullTime", "Intern".
 
 --------------------------------------------------------------------------------------------------------------------
@@ -670,40 +672,40 @@ testers are expected to do more *exploratory* testing.
 
     1. Prerequisites: List all employees using the `list` command. There are no existing employees in the list.
 
-    2. Test case: `add n/Bob Choo p/22222222 e/bob@example.com r/Head of Office t/friend` (Valid entry)<br>
+    2. Test case: `add n/Bob Choo p/22222222 e/bob@example.com r/Head of Office d/Operations t/friend` (Valid entry)<br>
        Expected: The employee is added. The success message is shown, along with the added details.
 
-    3. Test case: `add  n/Amy Choo p/22222222 e/amy@example.com r/Head of Office t/friend` (Preamble is a space)<br>
+    3. Test case: `add  n/Amy Choo p/22222222 e/amy@example.com r/Head of Office d/Operations t/friend` (Preamble is a space)<br>
        Expected: The employee is added. The success message is shown, along with the added details.
 
-    4. Test case: `add k n/Amy Choo p/22222222 e/amy@example.com r/Head of Office t/friend` (Preamble is not a space)<br>
+    4. Test case: `add k n/Amy Choo p/22222222 e/amy@example.com r/Head of Office d/Operations t/friend` (Preamble is not a space)<br>
        Expected: The employee is added. The success message is shown, along with the added details.
 
-    5. Test case: `add n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations t/friend` (Same exact name with existing entry)<br>
+    5. Test case: `add n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Same exact name with existing entry)<br>
        Expected: The employee is not added. Duplicate error message is shown, indicating an employee with same name already exists.
 
-    6. Test case: `add  n/Lance Choo p/33333333 e/lance@example.com r/Head of HR t/friend t/husband` (Multiple tags)<br>
+    6. Test case: `add  n/Lance Choo p/33333333 e/lance@example.com r/Head of HR d/Human Resources t/friend t/husband` (Multiple tags)<br>
        Expected: The employee is added. The success message is shown, along with the added details.
 
-    7. Test case: `add n/Amy Cho n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations t/friend` (Two names))<br>
+    7. Test case: `add n/Amy Cho n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Two names))<br>
        Expected: The employee is not added. Error messages for duplicated prefix shown.
 
     8. Other incorrect commands with duplicated attributes for the same employee: `add <other details> p/11111111 p/22222222`, `add <other details> e/amy@example.com e/bob@example.com`, or similar<br>
        Expected: The employee is not added. Error messages for duplicated prefix shown.
 
-    9. Test case: `add n/James& p/11111111 e/bob@meme.com r/Head of Operations t/friend` (Invalid name)<br>
+    9. Test case: `add n/James& p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Invalid name)<br>
        Expected: The employee is not added. The correct format for a valid name is shown.
 
     10. Other incorrect commands with invalid data: `add <other details> p/abc` (Non-numeric phone number) or similar<br>
         Expected: The employee is not added. The correct format for the attribute for which the argument is invalid is shown.
 
-    11. Test case: `add n/Pikachu p/11111111 e/bob@meme.com r/Head of Operations` (No optional Tag)<br>
+    11. Test case: `add n/Pikachu p/11111111 e/bob@meme.com r/Head of Operations d/Operations` (No optional Tag)<br>
         Expected: The employee is added. The success message is shown, along with the added details.
 
-    12. Test case: `add n/Peppa Pig e/peppa@example.com r/Head of Media` (No phone number) or similar absence of necessary attributes <br>
+    12. Test case: `add n/Peppa Pig e/peppa@example.com r/Head of Media d/Media` (No phone number) or similar absence of necessary attributes <br>
         Expected: The employee is not added. Error message is shown, along with the correct format and required parameters.
 
-    13. Test case: `add n/Pikachu p/11111111 e/bob@meme.com r/Head of Operations` (No optional Tag)<br>
+    13. Test case: `add n/Pikachu p/11111111 e/bob@meme.com r/Head of Operations d/Operations` (No optional Tag)<br>
          Expected: The employee is added. The success message is shown, along with the added details.
 
     14. Other incorrect delete commands to try: `add`, `add johndoe p/3333` (no prefix), and other commands which deviate from the command format<br>
@@ -780,7 +782,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Searching for employees using a keyword
 
-   1. Prerequisites: List all employees using the list command. Multiple employees in the list with various names, phones, emails, addresses, and tags.
+   1. Prerequisites: List all employees using the list command. Multiple employees in the list with various names, phones, emails, roles, departments, and tags.
 
    2. Test case: `search John`<br>
       Expected: All employees whose name contains "John" (case-insensitive) are listed. Status message shows the number of employees listed
