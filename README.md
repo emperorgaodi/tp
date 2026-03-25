@@ -1,5 +1,5 @@
 [![CI Status](https://github.com/AY2526S2-CS2103T-T13-1/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2526S2-CS2103T-T13-1/tp)
-[![codecov](https://codecov.io/gh/AY2526S2-CS2103T-T13-1/team-repo/graph/badge.svg?token=69QVHSVU3C)](https://codecov.io/gh/AY2526S2-CS2103T-T13-1/team-repo)
+[![codecov](https://codecov.io/gh/AY2526S2-CS2103T-T13-1/tp/graph/badge.svg?token=69QVHSVU3C)](https://codecov.io/gh/AY2526S2-CS2103T-T13-1/team-repo)
 
 ![Ui](docs/images/Ui.png)
 

@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.logging.Logger;
 
 import javafx.collections.ListChangeListener;
@@ -49,10 +51,11 @@ public class StatsPanel extends UiPart<Region> {
      */
     public StatsPanel(Logic logic) {
         super(FXML);
+        requireNonNull(logic, "Logic must not be null"); // ADD THIS LINE
         this.logic = logic;
         this.statisticsService = new StatisticsService(logic);
 
-        // Listen for changes to the person list - using anonymous class
+        // Listen for changes to the person list
         logic.getFilteredPersonList().addListener(new ListChangeListener<Person>() {
             @Override
             public void onChanged(Change<? extends Person> change) {
@@ -85,3 +88,4 @@ public class StatsPanel extends UiPart<Region> {
         tagDistributionLabel.setText(stats.getTagDistribution());
     }
 }
+

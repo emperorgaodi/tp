@@ -1,5 +1,7 @@
 package seedu.address.model;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,19 +16,21 @@ import seedu.address.model.tag.Tag;
  * This is a data container with no UI logic.
  */
 public class Statistics {
-
     private final int totalEmployees;
     private final int uniqueTagCount;
     private final String mostCommonTag;
     private final int employeesWithTags;
     private final int employeesWithoutTags;
     private final String tagDistribution;
+    private final Map<String, Integer> tagFrequency; // ADD THIS LINE
 
     /**
      * Creates a Statistics object by calculating from a list of persons.
      * @param persons The list of persons to calculate statistics from
      */
     public Statistics(List<Person> persons) {
+        requireNonNull(persons);
+
         this.totalEmployees = persons.size();
 
         // Calculate tag statistics
@@ -46,6 +50,7 @@ public class Statistics {
             }
         }
 
+        this.tagFrequency = tagFrequency; // ADD THIS LINE - Store it as instance variable
         this.employeesWithTags = employeesWithTagsCount;
         this.employeesWithoutTags = totalEmployees - employeesWithTagsCount;
         this.uniqueTagCount = uniqueTags.size();
@@ -104,6 +109,10 @@ public class Statistics {
     }
 
     public String getMostCommonTag() {
+        if (tagFrequency.isEmpty()) {
+            return "None"; // Ensure this returns "None" for empty case
+        }
+
         return mostCommonTag;
     }
 

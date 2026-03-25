@@ -500,7 +500,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 3a. No employees match the provided search query.
     * 3a1. System displays `0 employees listed!`.
- 
+
     Use case ends.
 
 ### Use case 5 (UC5): Tag an employee
