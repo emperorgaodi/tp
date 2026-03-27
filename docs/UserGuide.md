@@ -74,7 +74,7 @@ HRmanager is a **desktop app for managing employee and applicant records, optimi
   e.g. `t/Probation`, `t/On 4 days leave`, `t/HR Department` are valid; `t/HR!`(contains special character), and tags longer than 50 characters are invalid.
 
 * Role constraints: Roles must be **alphanumeric or spaces** (only letters, numbers, spaces) and **between 1 to 50 characters long**. Roles are **case-sensitive**. Roles cannot start with a space.<br>
-e.g. `r/HR`, `r/Department123`, `r/HR Department` are valid; `r/HR!`(contains special character), and tags longer than 50 characters are invalid.
+e.g. `r/TalentAcquisition`, `r/VP2`, `r/HR Department` are valid; `r/HR!`(contains special character), and tags longer than 50 characters are invalid.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>

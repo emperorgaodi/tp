@@ -23,7 +23,7 @@ public class RoleTest {
     public void isValidRole() {
         // null role
         assertThrows(NullPointerException.class, () -> Role.isValidRole(null));
-        
+
 
         // invalid roles
         assertFalse(Role.isValidRole("")); // empty string
@@ -36,7 +36,7 @@ public class RoleTest {
         assertFalse(Role.isValidRole("HR_Department")); // contains underscore non-alphanumeric character
         assertFalse(Role.isValidRole("HR-Department")); // contains hyphen non-alphanumeric character
         assertFalse(Role.isValidRole("123456789012345678901234567890123456789012345678901")); // 51 characters
-        assertFalse(Role.isValidRole("Department 3 4th division head of marketing and security")); // 56 characters 
+        assertFalse(Role.isValidRole("Department 3 4th division head of marketing and security")); // 56 characters
 
 
         // valid roles
