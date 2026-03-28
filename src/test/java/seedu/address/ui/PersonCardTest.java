@@ -3,6 +3,7 @@ package seedu.address.ui;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,22 +13,31 @@ import seedu.address.testutil.PersonBuilder;
 
 public class PersonCardTest {
 
+    private static boolean isJavaFxInitialized = false;
+
     @BeforeAll
     public static void setUp() {
         try {
             Platform.startup(() -> {});
+            isJavaFxInitialized = true;
         } catch (IllegalStateException e) {
             // Toolkit already initialized
+            isJavaFxInitialized = true;
+        } catch (UnsupportedOperationException | UnsatisfiedLinkError e) {
+            // Headless environment toolkit initialization failed
+            isJavaFxInitialized = false;
         }
     }
 
     @Test
     public void constructor_nullPerson_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         assertThrows(NullPointerException.class, () -> new PersonCard(null, 0));
     }
 
     @Test
     public void constructor_validPerson_success() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person validPerson = new PersonBuilder().build();
         PersonCard personCard = new PersonCard(validPerson, 1);
         assertNotNull(personCard);
@@ -35,6 +45,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullName_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
@@ -53,6 +64,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullPhone_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
@@ -71,6 +83,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullRole_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
@@ -89,6 +102,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullDepartment_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
@@ -107,6 +121,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullEmail_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
@@ -125,6 +140,7 @@ public class PersonCardTest {
 
     @Test
     public void constructor_nullTags_throwsNullPointerException() {
+        Assumptions.assumeTrue(isJavaFxInitialized);
         Person missingAttributePerson = new PersonBuilder().build();
         Person testPerson = new Person(
                 missingAttributePerson.getName(),
