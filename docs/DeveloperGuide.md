@@ -537,8 +537,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
     Use case resumes at step 2.
 
-* 5b. The tag name provided is invalid (e.g., blank, exceeds 50 characters, or contains non-alphanumeric characters).
-    * 5b1. System shows an error message: "Tags names should be alphanumeric and between 1 to 50 characters long".
+* 5b. The tag name provided is invalid (e.g., blank, exceeds 30 characters, or contains non-alphanumeric characters).
+    * 5b1. System shows an error message: "Tag must be within a 30 char limit, and consist of alphanumeric or space only. Space cannot be the first character.".
 
     Use case resumes at step 4.
 
@@ -657,7 +657,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Employee Record**: A collection of information stored in the system about an employee, such as name, email, phone number, role, and department.
 * **Command Line Interface (CLI)**: A text-based interface where users interact with the application by typing commands.
 * **Department**: The organizational unit an employee belongs to (e.g., `Engineering`, `Finance`, `Human Resources`).
-* **Tag**: A label that can be attached to an employee record for categorization purposes. Tags must be alphanumeric and 1-50 characters in length. Examples include "HR", "Manager", "FullTime", "Intern".
+* **Tag**: A label that can be attached to an employee record for categorization purposes. Tags must be alphanumeric and 1-30 characters in length. Examples include "HR", "Manager", "FullTime", "Intern".
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -787,13 +787,15 @@ testers are expected to do more *exploratory* testing.
       Expected: First employee is tagged with both "HR" and "Manager". Success message shown.
 
    4. Test case: `tag 2 t/` (empty tag)<br>
-      Expected: No tag is added. Error details shown: "Tags names should be alphanumeric and between 1 to 50 characters long".
+      Expected: No tag is added. Error details shown: "Tags names should be alphanumeric and between 1 to 30 characters long".
+
+
 
    5. Test case: `tag 2 t/HR_Department` (contains underscore)<br>
       Expected: No tag is added. Error details shown due to non-alphanumeric character.
 
-   6. Test case: `tag 2 t/[a string of 51 characters]`<br>
-      Expected: No tag is added. Error details shown due to exceeding 50-character limit.
+   6. Test case: `tag 2 t/[a string of 31 characters]`<br>
+      Expected: No tag is added. Error details shown due to exceeding 30-character limit.
 
    7. Test case: `tag 2 t/HR` (when employee already has "HR" tag)<br>
       Expected: No duplicate tag is added. Error details shown indicating duplicate tag.
