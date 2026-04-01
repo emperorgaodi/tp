@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
- * Represents a Person's role in the address book.
+ * Represents a Person's role in HRmanager.
  * Guarantees: immutable; is valid as declared in {@link #isValidRole(String)}
  */
 public class Role {
@@ -17,7 +17,7 @@ public class Role {
             + "and it should not contain consecutive spaces or hyphens.";
 
     /*
-     * The first character of the address must not be a whitespace,
+     * The first character of the role must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
     public static final String VALIDATION_REGEX =
