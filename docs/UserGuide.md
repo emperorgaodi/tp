@@ -184,7 +184,7 @@ Examples:
 * `search zzz` shows `0 employees listed!` if no employee names match.
 
 
-### Viewing statistics: `stat`
+### Viewing statistics: `stat` 
 
 * Displays real-time statistics about your employee records in a dedicated panel on the right side of the application.
 
@@ -202,8 +202,10 @@ Format:
 
 ![stats panel](images/statspanel.png)
 
+<box type="tip" seamless>
 
 **Tip:** The stats panel is always visible and updates in real-time when you add, edit, or delete employees. No command is needed to view statistics!
+</box>
 
 <br>
 
