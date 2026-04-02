@@ -73,11 +73,17 @@ public class EditCommand extends Command implements ConfirmableCommand {
 
         this.index = index;
         this.editPersonDescriptor = new EditPersonDescriptor(editPersonDescriptor);
+
+        assert this.editPersonDescriptor != null : "EditPersonDescriptor defensive copy failed";
     }
 
     @Override
     public String getConfirmationPrompt() {
+        assert index != null : "Index cannot be null when generating confirmation prompt";
+
         String actionSummary = String.format(ACTION_SUMMARY_FORMAT, index.getOneBased());
+
+        assert actionSummary != null && !actionSummary.isEmpty() : "Action summary should not be null or empty";
 
         return ConfirmationPromptFormatter.format(actionSummary, IMPACT_SUMMARY);
     }
@@ -91,13 +97,23 @@ public class EditCommand extends Command implements ConfirmableCommand {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         List<Person> lastShownList = model.getFilteredPersonList();
+        assert lastShownList != null : "Filtered person list cannot be null";
 
         if (index.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
         }
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
+        assert personToEdit != null : "Person to edit cannot be null";
+
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+        assert editedPerson != null : "Edited person cannot be null";
+
+        assert editedPerson.getName() != null : "Edited person must have a name";
+        assert editedPerson.getPhone() != null : "Edited person must have a phone";
+        assert editedPerson.getEmail() != null : "Edited person must have an email";
+        assert editedPerson.getRole() != null : "Edited person must have a role";
+        assert editedPerson.getDepartment() != null : "Edited person must have a department";
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
@@ -105,6 +121,9 @@ public class EditCommand extends Command implements ConfirmableCommand {
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+
+        assert model.getFilteredPersonList().contains(editedPerson) : "Edited person should be in the filtered list";
+
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
     }
 
@@ -114,6 +133,10 @@ public class EditCommand extends Command implements ConfirmableCommand {
      */
     private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
         requireNonNull(personToEdit);
+        requireNonNull(editPersonDescriptor);
+
+        assert personToEdit != null : "Person to edit cannot be null";
+        assert editPersonDescriptor != null : "Edit descriptor cannot be null";
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
         Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
@@ -121,6 +144,12 @@ public class EditCommand extends Command implements ConfirmableCommand {
         Role updatedRole = editPersonDescriptor.getRole().orElse(personToEdit.getRole());
         Department updatedDepartment = editPersonDescriptor.getDepartment().orElse(personToEdit.getDepartment());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
+
+        assert updatedName != null : "Updated name cannot be null";
+        assert updatedPhone != null : "Updated phone cannot be null";
+        assert updatedEmail != null : "Updated email cannot be null";
+        assert updatedRole != null : "Updated role cannot be null";
+        assert updatedDepartment != null : "Updated department cannot be null";
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedRole, updatedDepartment, updatedTags);
     }
@@ -168,6 +197,8 @@ public class EditCommand extends Command implements ConfirmableCommand {
          * A defensive copy of {@code tags} is used internally.
          */
         public EditPersonDescriptor(EditPersonDescriptor toCopy) {
+            assert toCopy != null : "EditPersonDescriptor to copy cannot be null";
+
             setName(toCopy.name);
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
@@ -229,6 +260,11 @@ public class EditCommand extends Command implements ConfirmableCommand {
          */
         public void setTags(Set<Tag> tags) {
             this.tags = (tags != null) ? new HashSet<>(tags) : null;
+
+            if (tags != null) {
+                assert this.tags != null : "Defensive copy of tags failed";
+                assert this.tags.size() == tags.size() : "Tag set size mismatch after defensive copy";
+            }
         }
 
         /**
