@@ -56,6 +56,21 @@ public class StatCommandParserTest {
     }
 
     @Test
+    public void parse_shorthandR_returnsRoleCommand() throws Exception {
+        assertParsesToMode("r", StatisticsMode.ROLE);
+    }
+
+    @Test
+    public void parse_fullWordRole_returnsRoleCommand() throws Exception {
+        assertParsesToMode("role", StatisticsMode.ROLE);
+    }
+
+    @Test
+    public void parse_roleWithWhitespace_returnsRoleCommand() throws Exception {
+        assertParsesToMode("  role  ", StatisticsMode.ROLE);
+    }
+
+    @Test
     public void parse_emptyArg_throwsParseException() {
         assertParseFailure(parser, "", expectedMessage);
     }
