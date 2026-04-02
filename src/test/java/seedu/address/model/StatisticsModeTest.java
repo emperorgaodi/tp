@@ -80,7 +80,7 @@ public class StatisticsModeTest {
 
     @Test
     public void fromUserInput_unknownString_returnsEmptyOptional() {
-        assertEquals(Optional.empty(), StatisticsMode.fromUserInput("role"));
+        assertEquals(Optional.empty(), StatisticsMode.fromUserInput("unknown"));
     }
 
     @Test
@@ -103,11 +103,12 @@ public class StatisticsModeTest {
     // ---- enum basics ----
 
     @Test
-    public void values_containsTagAndDepartment() {
+    public void values_containsTagAndDepartmentAndRole() {
         StatisticsMode[] modes = StatisticsMode.values();
-        assertEquals(2, modes.length);
+        assertEquals(3, modes.length);
         assertTrue(java.util.Arrays.asList(modes).contains(StatisticsMode.TAG));
         assertTrue(java.util.Arrays.asList(modes).contains(StatisticsMode.DEPARTMENT));
+        assertTrue(java.util.Arrays.asList(modes).contains(StatisticsMode.ROLE));
     }
 
     @Test
