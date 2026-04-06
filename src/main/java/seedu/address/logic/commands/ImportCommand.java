@@ -83,14 +83,14 @@ public class ImportCommand extends Command implements ConfirmableCommand {
 
         model.commitAddressBook();
 
+        if (persons.isEmpty()) {
+            return new CommandResult(MESSAGE_EMPTY_FILE);
+        }
+
         // Build a fresh address book and populate it atomically
         AddressBook newBook = new AddressBook();
         persons.forEach(newBook::addPerson);
         model.setAddressBook(newBook);
-
-        if (persons.isEmpty()) {
-            return new CommandResult(MESSAGE_EMPTY_FILE);
-        }
 
         return new CommandResult(
             String.format(MESSAGE_SUCCESS, persons.size(), path.toAbsolutePath()));
