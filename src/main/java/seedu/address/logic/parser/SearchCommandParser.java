@@ -35,8 +35,7 @@ public class SearchCommandParser implements Parser<SearchCommand> {
         }
 
         boolean hasInvalidKeyword = Arrays.stream(keywords)
-                .anyMatch(keyword -> keyword.length() > SearchCommand.MAX_KEYWORD_LENGTH
-                        || !keyword.matches(SearchCommand.KEYWORD_ALPHANUMERIC_REGEX));
+                .anyMatch(keyword -> keyword.length() > SearchCommand.MAX_KEYWORD_LENGTH);
 
         if (hasInvalidKeyword) {
             throw new ParseException(
