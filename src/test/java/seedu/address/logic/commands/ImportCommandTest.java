@@ -233,6 +233,30 @@ public class ImportCommandTest {
             new ImportCommand("/some/path.csv").getActionDescription());
     }
 
+    @Test
+    void validateBeforeConfirm_missingFile_throwsCommandException() {
+        Path missing = tempDir.resolve("missing.csv");
+        ImportCommand cmd = new ImportCommand(missing.toString());
+
+        CommandException ex = assertThrows(CommandException.class, () -> cmd.validateBeforeConfirm(model));
+        assertEquals(String.format(ImportCommand.MESSAGE_FILE_NOT_FOUND, missing), ex.getMessage());
+    }
+
+    @Test
+    void execute_afterValidateBeforeConfirm_usesCachedValidatedData() throws Exception {
+        Path csv = writeCsv(VALID_HEADER, VALID_ROW_1);
+        ImportCommand cmd = new ImportCommand(csv.toString());
+
+        cmd.validateBeforeConfirm(model);
+        Files.delete(csv);
+
+        CommandResult result = cmd.execute(model);
+
+        assertEquals(1, model.lastSetAddressBook.getPersonList().size());
+        assertTrue(model.isCommitCalled());
+        assertEquals(ImportCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+    }
+
     private Path writeCsv(String... lines) {
         return writeRaw(String.join("\n", lines));
     }
