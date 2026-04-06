@@ -81,11 +81,11 @@ public class ImportCommand extends Command implements ConfirmableCommand {
 
         List<Person> persons = readCsv(path);
 
-        model.commitAddressBook();
-
         if (persons.isEmpty()) {
             return new CommandResult(MESSAGE_EMPTY_FILE);
         }
+
+        model.commitAddressBook();
 
         // Build a fresh address book and populate it atomically
         AddressBook newBook = new AddressBook();

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,20 +74,24 @@ public class CsvImportUtil {
                 }
             }
 
-            if (headerLine == null) {
-                throw new CsvParseException("CSV file is empty.");
-            }
-
             resolveHeaderIndices(headerLine, lineNumber);
 
             // Parse data rows
+            List<String> names = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.isBlank()) {
                     continue; // skip blank rows silently
                 }
                 Person person = parseDataRow(line, lineNumber);
+                //check duplicates
+                if (names.contains(person.getName().toString())) {
+                    throw new CsvParseException(String.format(
+                        "Employees with duplicate names on line %d and %d: %s",
+                        names.indexOf(person.getName().toString()), lineNumber, person.getName()));
+                }
                 persons.add(person);
+                names.add(person.getName().toString());
             }
         }
 
@@ -99,6 +104,7 @@ public class CsvImportUtil {
         for (int i = 0; i < headers.size(); i++) {
 
             String header = headers.get(i).toLowerCase();
+            //didn't put a switch here, not sure what to do for the default case
             if (header.equals(HEADER_NAME)) {
                 idxName = i;
             } else if (header.equals(HEADER_PHONE)) {
@@ -165,7 +171,9 @@ public class CsvImportUtil {
         }
     }
 
-    /** Retrieves and trims the field at {@code index}, throwing if absent or blank. */
+    /**
+     * Retrieves and trims the field at {@code index}, throwing if absent or blank.
+     */
     private String getField(List<String> fields, int index, String fieldName, int lineNumber) throws CsvParseException {
         if (index >= fields.size()) {
             throw new CsvParseException(
@@ -179,7 +187,9 @@ public class CsvImportUtil {
         return value;
     }
 
-    /** Parses the optional tags column; returns an empty set if the column is absent. */
+    /**
+     * Parses the optional tags column; returns an empty set if the column is absent.
+     */
     private Set<Tag> parseTags(List<String> fields, int lineNumber) throws CsvParseException {
         if (idxTags == -1 || idxTags >= fields.size()) {
             return Set.of();
