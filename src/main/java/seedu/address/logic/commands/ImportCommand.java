@@ -74,6 +74,8 @@ public class ImportCommand extends Command implements ConfirmableCommand {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
+        model.commitAddressBook();
+
         Path path = resolvePath();
         validatePath(path);
 
