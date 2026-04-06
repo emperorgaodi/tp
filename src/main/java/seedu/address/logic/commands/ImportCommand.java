@@ -42,6 +42,8 @@ public class ImportCommand extends Command implements ConfirmableCommand {
         "The path does not point to a file: %s";
     public static final String MESSAGE_INVALID_PATH =
         "The provided file path is invalid: %s";
+    public static final String MESSAGE_NOT_CSV =
+        "Only csv files are supported";
     public static final String MESSAGE_CSV_PARSE_ERROR =
         "Failed to parse CSV file — %s";
     public static final String MESSAGE_IO_ERROR =
