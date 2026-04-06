@@ -103,7 +103,7 @@ public class CsvImportUtil {
 
         for (int i = 0; i < headers.size(); i++) {
 
-            String header = headers.get(i).toLowerCase();
+            String header = headers.get(i).toLowerCase().trim();
             //didn't put a switch here, not sure what to do for the default case
             if (header.equals(HEADER_NAME)) {
                 idxName = i;
