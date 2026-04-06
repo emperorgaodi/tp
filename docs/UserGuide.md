@@ -118,29 +118,44 @@ Format: `list`
 <br>
 
 
-### Adding an employee: `add`
+### Adding an employee : `add`
 
 Adds an employee to HRmanager.
 
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​`
+
+What this feature does:
+* Adds a new employee persistently into HRmanager.
+* Captures and stores their essential contact and job role details.
 
 <box type="tip" seamless>
 
 **Tip:** An employee can have any number of tags (including 0)
 </box>
 
+Additional constraints:
+* The compulsory fields are `n/NAME`, `p/PHONE_NUMBER`, `e/EMAIL`, `r/ROLE`, and `d/DEPARTMENT`. Each compulsory prefix must be provided exactly once.
+* `t/TAG` is optional and can be provided any number of times (including 0).
+* The employee to be added cannot already exist in HRmanager (based on a case-insensitive match on the name).
+* If two employees share the same real-world name, include a differentiating suffix in the name itself (for example, `John Doe Sales` and `John Doe Intern`) so that both names are unique.
+* Names are normalized to lowercase when stored in HRmanager.
+
 Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com r/Receptionist d/Operations`
+* `add n/John Doe p/98765432 e/johnd@example.com r/Receptionist d/Operations` adds an employee named John Doe with the specified details.
+* `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567 t/criminal` adds an employee named Betsy Crowe with two tags, `friend` and `criminal`.
 
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567 t/criminal`
+**Successful add command output:**
 
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/add-command-placeholder.png`
+
+<br>
 
 ### Parameter restrictions for each field:
 
 #### Name (`n/`)
 
 * __Characters:__ The name should consist of only alphanumeric characters and/or hyphens (`-`) and/or spaces (` `) and cannot be blank. The name should not contain consecutive hyphens or spaces. The name should not start or end with a hyphen or space. No other characters are allowed.
-* __Case sensitivity:__ The name entered is case-insensitive eg. adding `John Doe` will be invalid if `john doe` already exists in HRmanager. The name will be stored in Hr manager in lower casing.
+* __Case sensitivity:__ The name entered is case-insensitive. For example, adding `John Doe` will be invalid if `john doe` already exists in HRmanager. Names are stored in HRmanager in lowercase.
 * __Input length:__ The name must be between 1 and 50 characters long (inclusive).
 
 #### Phone (`p/`)
