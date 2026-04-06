@@ -57,7 +57,7 @@ public class LogicManager implements Logic {
         Command command = addressBookParser.parseCommand(commandText);
         if (command instanceof ConfirmableCommand confirmableCommand) {
             pendingConfirmation = new PendingConfirmation(command, confirmableCommand.getActionDescription());
-            return new CommandResult(confirmableCommand.getConfirmationPrompt());
+            return new CommandResult(confirmableCommand.getConfirmationPrompt(model));
         }
 
         return executeAndSave(command);
