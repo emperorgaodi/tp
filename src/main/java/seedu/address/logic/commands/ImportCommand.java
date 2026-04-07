@@ -36,6 +36,7 @@ public class ImportCommand extends Command implements ConfirmableCommand {
     public static final String ACTION_DESCRIPTION = "import local list";
 
 
+
     public static final String MESSAGE_FILE_NOT_FOUND =
         "File not found: %s\nPlease check that the path is correct and the file exists.";
     public static final String MESSAGE_NOT_A_FILE =
@@ -44,8 +45,10 @@ public class ImportCommand extends Command implements ConfirmableCommand {
         "The provided file path is invalid: %s";
     public static final String MESSAGE_NOT_CSV =
         "Only csv files are supported";
+    public static final int maxKilobytes = 100;
+    public static final int maxBytes = 100000; //100kb
     public static final String MESSAGE_FILE_SIZE_OVER_LIMIT =
-        "Target file exceeds the limit of 1.0mb (1000000 bytes).";
+        String.format("Target file exceeds the limit of %d kB (%d bytes)", maxKilobytes, maxBytes);
     public static final String MESSAGE_CSV_PARSE_ERROR =
         "Failed to parse CSV file — %s";
     public static final String MESSAGE_IO_ERROR =
@@ -54,8 +57,6 @@ public class ImportCommand extends Command implements ConfirmableCommand {
         "Target file is empty!\nTo clear current list, use 'clear' command.";
 
     private final String filePath;
-
-    private final int maxBytes = 1000000; //1mb
 
     /**
      * Constructs an ImportCommand instance given a file path.
