@@ -413,9 +413,13 @@ Notes on file format:
 
 > **PNG placeholder:** Insert a screenshot here, e.g. `images/correct-csv-file-placeholder.png`
 
-For new users who are not used to typing out full file paths,
-* OPTION 1: Drag the target file into HRmanager's home folder, and input `import (file name in full, including extension)` into HRmanager.
-* OPTION 2: Right-click on the target file, click "Copy as path", and input `import (Ctrl+V to paste file path)` into HRmanager.
+Examples:
+* `import employees.csv`
+* `import "C:\Users\username\Downloads\2026_employee_list.csv"`
+
+Alternative ways to import:
+1. Drag the target file into HRmanager's home folder, and input `import (file name in full, including extension)` into HRmanager. 
+2. Right-click on the target file, click "Copy as path", and input `import (Ctrl+V to paste file path)` into HRmanager.
 
 > **PNG placeholder:** Insert a screenshot here, e.g. `images/import-steps-graphic-placeholder.png`
 
@@ -426,6 +430,7 @@ For new users who are not used to typing out full file paths,
 
 <br>
 
+
 ### Export employee data : `export`
 
 Exports the current list of employees into a CSV file, saved into user-specified local destination.
@@ -433,6 +438,7 @@ Exports the current list of employees into a CSV file, saved into user-specified
 Format: `export [FILE PATH]`
 
 <br>
+
 
 ### Exiting the program : `exit`
 
