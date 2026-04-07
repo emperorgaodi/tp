@@ -134,6 +134,10 @@ Examples:
 
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567 t/criminal`
 
+<box type="info" seamless>
+
+**🔁 Undo Possible:** This command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
+</box>
 
 ### Parameter restrictions for each field:
 
@@ -223,22 +227,6 @@ Format:
 <br>
 
 
-### Cycle through previous executed commands
-
-> Just wrote and executed a long command, and want a faster way to write a very similar command? Or, just want to refer back to the command you wrote?
-
-You can pre-fill the command box with your last successful commands using the **PgUp (Up arrow) key** on your keyboard. This allows you to easily repeat your last commands without re-typing it in its entirety.
-
-* Command history navigation: Use the **PgUp (Up arrow)** key to move towards older commands, **PgDn (Down arrow) key** to move towards latest commands.
-* Only successful commands are saved.
-* Up to **10** past commands are saved. Thereafter, the oldest command is deleted to accomodate a new one.
-* The current pending command is saved when the command history is explored, so your progress on current half-written commands is not lost when you browse the command history.
-* The latest command will not be saved if it is exactly the same as the previous consecutively executed one (that is already saved).
-* Confirmatory commands like 'y' and 'n' are not saved.
-
-<br>
-
-
 ### Editing an employee : `edit`
 
 Edits an existing employee in HRmanager.
@@ -257,6 +245,10 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]
 <box type="info" seamless>
 
 **⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental edits. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
+</box>
+<box type="info" seamless>
+
+**🔁 Undo Possible:** This command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
 </box>
 
 Examples:
@@ -282,6 +274,10 @@ What this feature does:
 <box type="info" seamless>
 
 **⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental deletion. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
+</box>
+<box type="info" seamless>
+
+**🔁 Undo Possible:** This command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
 </box>
 
 Additional constraints:
@@ -320,6 +316,10 @@ Tips:
 
 **⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental data loss. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
 </box>
+<box type="info" seamless>
+
+**🔁 Undo Possible:** This command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
+</box>
 
 <br>
 
@@ -330,24 +330,17 @@ Exports the current list of employees into a CSV file, saved into user-specified
 
 Format: `export [FILE PATH]`
 
-<br>
+<box type="info" seamless>
 
+**⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental edits. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
+</box>
+<box type="info" seamless>
 
-### Undo an executed command : `undo`
-
-Reverses the effects of a prior `add`, `edit`, or `delete` command.
-
-Format: `undo`
-
-What this feature does:
-* Reverse/Undo a previous successful `add`, `edit`, or `delete` command.
-* If there are sufficient eligible executed commands (see above), you can execute `undo` up to 10 times in a consecutive sequence (disregarding commands that are not eligible for undo).
-* `undo` still works even if there are commands not eligible for `undo` in the past sequence; it will simply ignore them. For example, if you execute `add [parameters...]` then `help` then `undo`, `undo` can ignore `help` (which is not eligible for undo) and reverse the effects of `add`.
-
-Tip:
-* The only meaningful way to use this command is to type `undo` itself; any other parameters will be ignored. See: [Extraneous parameters](#features-1)
+**🔁 Undo Possible:** `import` command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
+</box>
 
 <br>
+
 
 ### Exiting the program : `exit`
 
@@ -378,10 +371,12 @@ Since HRmanager stores **sensitive employee data** (personal information, contac
 * `delete` - When deleting one or more employees
 * `clear` - When clearing all entries
 * `exit` - When closing the application
+* `import` - When importing data into the application from a file
+* `import` - When exporting data from the application to a file
 
 **How confirmation works:**
 1. After you enter one of the above commands, a confirmation prompt will appear displaying:
-   - The action you're about to perform
+   - The action you are about to perform
    - The impact of this action
 2. You must respond with either:
    - `y` - to proceed with the command
@@ -397,6 +392,14 @@ Impact: Permanently removes employee(s) from HRmanager
 
 > y
 Employee deleted successfully
+
+> edit 1 n/john
+Please confirm this action. Enter 'y' to proceed or 'n' to cancel.
+Action: Edit employee at index 1.
+Impact: Provided fields will overwrite existing employee details.
+
+> n
+Cancelled: edit employee details.
 ```
 
 <box type="tip" seamless>
@@ -406,9 +409,85 @@ Employee deleted successfully
 
 <br>
 
+
+### Undo an executed command : `undo`
+
+Reverses the effects of a prior `add`, `edit`, `delete`, `clear`, or `import` command (Collectively: "Eligible commands").
+
+Format: `undo`
+
+What this feature does:
+* Reverse/undo the effects of a previous successful eligible command.
+* Each previous successful eligible command is saved (up to 10 of the latest ones). Hence, if there are sufficient such saved commands, you can execute `undo` up to 10 times on the 10 eligible commands in a consecutive sequence.
+* You can only undo commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to do `undo` on those commands from previous sessions.
+
+Other details:
+* The only meaningful way to use this command is to type `undo` itself; any other parameters will be ignored. See: [Extraneous parameters](#features-1)
+* `undo` is intended as a quality of life feature primarily to save time that would be spent reversing a few of the most recent changes if users change their mind. Given this, and that most users are likely to only undo a few recent actions, limiting undo to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour arising from a large number of reversals. 
+
+Examples:
+* `undo` can be used repeatedly: the execution sequence
+```
+> add (parameters...)
+> edit (parameters...)
+> y
+> clear
+> y
+> undo
+> undo
+> undo
+```
+will not result in any net change because all the changes are reversed.
+* `undo` ignores ineligible commands: the execution sequence 
+```
+> add (parameters...)
+> help 
+> edit (parameters...)
+> y
+> clear
+> y
+> search ronald
+> list
+> undo
+> undo
+> undo
+```
+is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored.
+* `undo` still works even if there are commands not eligible for `undo` in the past sequence; it will simply ignore them. For example, if you execute
+```
+> add (params...)
+> help
+> undo
+```
+then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`. 
+* `undo` can be used up to 10 times, given there are sufficient eligible commands saved: After adding 11 people (with 11 `add (params...)`), you can enter `undo` 10 times to remove the 10 latest additions. Thereafter, using `undo` again results in the hint "There are no commands to undo.". To be clear, consider noting that the example sequence `add (params...)`, then `help`; collectively contributes 1 saved eligible command since `help` is not eligible for undo.
+
+<br>
+
+
+### Cycle through previous executed commands
+
+You can pre-fill the command box with your last successful commands using the **PgUp (Up arrow) key** on your keyboard. This allows you to easily repeat your last commands without re-typing it in its entirety. This is also useful for referring back to the command written, which otherwise disappears after execution.
+
+* Command history navigation: Use the **PgUp (Up arrow)** key to move towards older commands, **PgDn (Down arrow) key** to move towards latest commands.
+* Only successful commands are saved.
+* Up to **10** past commands are saved. Thereafter, the oldest command is deleted to accomodate a new one.
+* The current pending command is saved when the command history is explored, so your progress on current half-written commands is not lost when you browse the command history.
+* The latest command will not be saved if it is exactly the same as the previous consecutively executed one (that is already saved).
+* Confirmatory commands like 'y' and 'n' are not saved.
+* You can only cycle through commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to toggle/cycle through them.
+
+Other details:
+* This command history cycling feature is intended as a quality of life feature primarily to save time that would be spent re-typing similar commands. Given this, and that most users are likely to only use a few of the most recent commands, limiting cycling to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour. 
+
+<br>
+
+
 ### Saving the data
 
 HRmanager data are saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
+
+<br>
 
 
 ### Editing the data file

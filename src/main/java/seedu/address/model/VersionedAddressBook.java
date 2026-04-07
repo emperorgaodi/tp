@@ -12,7 +12,7 @@ import seedu.address.commons.util.ToStringBuilder;
  */
 public class VersionedAddressBook extends AddressBook {
 
-    private static final int MAX_HISTORY_SIZE = 10;
+    private static final int MAX_HISTORY_SIZE = 11;
 
     private final List<ReadOnlyAddressBook> addressBookStateList;
     private int currentStatePointer;
