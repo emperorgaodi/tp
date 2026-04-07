@@ -6,7 +6,7 @@
 
 # HRmanager User Guide
 
-HRmanager is a **desktop app for managing employee and applicant records, optimized for use via a Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, HRmanager can help you manage HR records faster than traditional GUI apps.
+HRmanager is a **desktop app for managing employee and applicant records, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, HRmanager can help you manage HR records faster than traditional GUI apps.
 
 <!-- * Table of Contents -->
 <page-nav-print />
@@ -92,7 +92,7 @@ Here is a quick guide to jump straight to the section you need:
 * Parameters can be in any order.<br>
   e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be ignored.<br>
+* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `undo`, `exit` and `clear`) will be ignored.<br>
   e.g. if the command specifies `help 123`, it will be interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -106,6 +106,12 @@ Shows a message explaining how to access the help page.
 
 Format: `help`
 
+Additional notes:
+* Extraneous parameters are ignored (for example, `help 123` is treated as `help`).
+
+Examples:
+* `help`
+
 <br>
 
 
@@ -115,36 +121,58 @@ Shows a list of all employees in HRmanager.
 
 Format: `list`
 
+Additional notes:
+* Extraneous parameters are ignored (for example, `list abc` is treated as `list`).
+* Running `list` returns the display to the full global employee list after any narrowed search results view.
+
+Examples:
+* `list`
+
 <br>
 
 
-### Adding an employee: `add`
+### Adding an employee : `add`
 
 Adds an employee to HRmanager.
 
 Format: `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​`
+
+What this feature does:
+* Adds a new employee persistently into HRmanager.
+* Captures and stores their essential contact and job role details.
 
 <box type="tip" seamless>
 
 **Tip:** An employee can have any number of tags (including 0)
 </box>
 
-Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com r/Receptionist d/Operations`
+Additional constraints:
+* The compulsory fields are `n/NAME`, `p/PHONE_NUMBER`, `e/EMAIL`, `r/ROLE`, and `d/DEPARTMENT`. Each compulsory prefix must be provided exactly once.
+* `t/TAG` is optional and can be provided any number of times (including 0).
+* The employee to be added cannot already exist in HRmanager (based on a case-insensitive match on the name).
+* If two employees share the same real-world name, include a differentiating suffix in the name itself (for example, `John Doe Sales` and `John Doe Intern`) so that both names are unique.
+* Names are normalized to lowercase when stored in HRmanager.
 
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567 t/criminal`
+Examples:
+* `add n/John Doe p/98765432 e/johnd@example.com r/Receptionist d/Operations` adds an employee named John Doe with the specified details.
+* `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567 t/criminal` adds an employee named Betsy Crowe with two tags, `friend` and `criminal`.
+
+**Successful add command output:**
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/add-command-placeholder.png`
 
 <box type="info" seamless>
 
 **🔁 Undo Possible:** This command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
 </box>
+<br>
 
 ### Parameter restrictions for each field:
 
 #### Name (`n/`)
 
 * __Characters:__ The name should consist of only alphanumeric characters and/or hyphens (`-`) and/or spaces (` `) and cannot be blank. The name should not contain consecutive hyphens or spaces. The name should not start or end with a hyphen or space. No other characters are allowed.
-* __Case sensitivity:__ The name entered is case-insensitive eg. adding `John Doe` will be invalid if `john doe` already exists in HRmanager. The name will be stored in Hr manager in lower casing.
+* __Case sensitivity:__ The name entered is case-insensitive. For example, adding `John Doe` will be invalid if `john doe` already exists in HRmanager. Names are stored in HRmanager in lowercase.
 * __Input length:__ The name must be between 1 and 50 characters long (inclusive).
 
 #### Phone (`p/`)
@@ -179,49 +207,94 @@ Examples:
 <br>
 
 
-### Searching employees by name: `search`
+### Searching for an employee : `search`
 
-Finds employees whose names contain any of the given keywords.
+Finds employees whose fields contain all of the given keywords.
 
-Format: `search KEYWORD [MORE_KEYWORDS]...`
+Format: `search KEYWORD [MORE_KEYWORDS]...` (each keyword separated by a space)
 
-* The search is case-insensitive. e.g `hans` will match `Hans`
-* Only one keyword allowed i.e. spaces are invalid.
-* Every field is searched (name, phone, email, role, department, tag(s) if any).
-* Partial matches are supported. e.g. `Han` will match `Hans`
-* The keyword must be at most `50` characters long.
-* A blank search is invalid and HRmanager will show the command usage message.
+What this feature does:
+* Filters the employee list to show only those who match all provided keywords.
+* Searches across every field (name, phone, email, role, department, and tags).
+* Evaluates partial matches (e.g., `Han` will match `Hans`).
+
+Additional constraints:
+* The search is case-insensitive.
+* At least **one** keyword must be provided.
+* A maximum of **5** keywords can be supplied in a single command.
+* Each keyword must be **alphanumeric** only (no spaces or special characters).
+* Each keyword must be at most **20** characters long.
+* To return to the full employee list after `search`, run `list`.
 
 Examples:
-* `search John` returns `john` and `John Doe`
-* `search friends` returns employees such as `Alex Yeoh` and `Bernice Yu` with the tag "friends". <br>
-  ![result for 'search alex bernice'](images/searchAlexBerniceResult.png)
-* `search zzz` shows `0 employees listed!` if no employee names match.
+* `search John` returns employees with "John" anywhere in their fields (e.g., `John Doe`).
+* `search friends` returns employees with the "friends" tag or keyword.
+* `search alice eng` returns employees that match both "alice" and "eng" (e.g., Alice who is an Engineer).
+* `search zzz` shows `0 employees listed!` if no employee fields match.
+
+**Successful search command output:**
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/search-command-placeholder.png`
 
 <br>
 
 
-### Viewing statistics: `stat`
+### Switching the statistics dashboard mode: `stat`
 
-* Displays real-time statistics about your employee records in a dedicated panel on the right side of the application.
+Switches the right-side HR statistics dashboard to a selected mode so you can focus on the metric that matters now.
 
-* The statistics panel automatically updates as you add, edit, or delete employees, providing instant visibility into your workforce metrics.
+Format: `stat MODE`
 
-Format:
+What this feature does:
+* Changes the dashboard between **tag**, **department**, and **role** distributions.
+* Gives an at-a-glance view of workforce composition by showing total employees and grouped distribution trends.
+* Helps HR quickly see which tags, departments, and roles exist, so they can search and manage records more efficiently.
+* Uses the full employee records in HRmanager for dashboard computation.
+* Shows organisation-wide metrics based on the full employee dataset, even when the on-screen list is filtered (for example after `search`).
 
-**Statistics displayed:**
-- 👥 **Total employees**: Total number of employee records
-- 🏷️ **Unique tags**: Number of distinct tags used across all employees
-- 📈 **Most common tag**: The tag that appears most frequently (with count)
-- ✅ **Employees with tags**: Number of employees that have at least one tag
-- ❌ **Employees without tags**: Number of employees with no tags
-- 📋 **Tag distribution**: Top 5 most frequently used tags
+Supported modes:
+* `t` or `tag` - Shows tag-focused statistics.
+* `d`, `dept`, or `department` - Shows department-focused statistics.
+* `r` or `role` - Shows role-focused statistics.
 
-![stats panel](images/statspanel.png)
+<box type="info" seamless>
+
+**Mode-specific display behavior:**
+* All modes show total employees.
+* **Tag mode:** Unique tags, most common tag, employees with tags, employees without tags, and tag distribution.
+* **Department mode:** Unique departments, most common department, and department distribution.
+* **Role mode:** Unique roles, most common role, and role distribution.
+* For all modes, distribution values are shown top-to-bottom in descending count (highest at the top, lowest at the bottom).
+* If multiple values have the same count, they are ordered alphabetically (case-insensitive).
+* If multiple values tie for the highest count, the displayed most common value (tag/department/role) is the alphabetically first one (case-insensitive).
+* For all modes, values are computed from the full HRmanager dataset (global distribution), not only the currently filtered on-screen list.
+</box>
+
+Additional constraints:
+* Exactly **one** mode must be provided.
+* The mode is case-insensitive.
+* If the input format is invalid, HRmanager shows the `stat` command usage message.
+
+Examples:
+* `stat t` switches the dashboard to tag distribution mode.
+* `stat department` switches the dashboard to department distribution mode.
+* `stat r` switches the dashboard to role distribution mode.
+
+**Tag mode dashboard (`stat t` or `stat tag`):**
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/stat-tag-mode-placeholder.png`
+
+**Department mode dashboard (`stat d`, `stat dept`, or `stat department`):**
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/stat-department-mode-placeholder.png`
+
+**Role mode dashboard (`stat r` or `stat role`):**
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/stat-role-mode-placeholder.png`
 
 <box type="tip" seamless>
 
-**Tip:** The stats panel is always visible and updates in real-time when you add, edit, or delete employees. No command is needed to view statistics!
+**Tip:** The stats panel updates automatically after employee record changes (for example `add`, `edit`, `delete`, `clear`) while staying in the currently selected mode.
 </box>
 
 <br>
@@ -270,6 +343,7 @@ What this feature does:
 * Removes one or more employees permanently from HRmanager.
 * Works on the employee list that is currently shown on screen.
 * Supports deleting several employees in one command.
+* If deletion is done from a filtered list (for example after `search`), the main window remains on the filtered list view after successful deletion.
 
 <box type="info" seamless>
 
@@ -283,7 +357,7 @@ What this feature does:
 Additional constraints:
 * At least **one** index must be provided.
 * Each index must be a **positive non-zero integer**: `1`, `2`, `3`, ...
-* A maximum of **100** indexes can be supplied in a single command.
+* A maximum of **10** indexes can be supplied in a single command.
 * Indexes are based on the **current displayed list**, not on a hidden or previously shown list.
 * If any supplied index is out of range, the deletion fails and no employee is deleted.
 * Repeated indexes are accepted, but duplicate indexes are ignored internally.
@@ -308,8 +382,11 @@ Clears all entries from HRmanager; that is, delete all employees.
 
 Format: `clear`
 
-Tips:
-* The only meaningful way to use this command is to type `clear` itself, any other parameters will be ignored. See: [Extraneous parameters](#features-1)
+Additional notes:
+* Extraneous parameters are ignored (for example, `clear now` is treated as `clear`). See: [Extraneous parameters](#features-1)
+
+Examples:
+* `clear`
 
 <box type="info" seamless>
 
@@ -335,7 +412,7 @@ Format: `export [FILE PATH]`
 </box>
 <box type="info" seamless>
 
-**🔁 Undo Possible:** `import` command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
+**🔁 Undo Possible:** `import` (but NOT `export`) command can be reversed if executed recently. See [Undo](#undo-an-executed-command--undo) for details.
 </box>
 
 <br>
@@ -347,13 +424,16 @@ Close the application.
 
 Format: `exit`
 
+Additional notes:
+* Extraneous parameters are ignored (for example, `exit now` is treated as `exit`). See: [Extraneous parameters](#features-1)
+
+Examples:
+* `exit`
+
 <box type="info" seamless>
 
 **⚠️ Confirmation Required:** This command requires confirmation before execution. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
 </box>
-
-Tip:
-* The only meaningful way to use this command is to type `exit` itself; any other parameters will be ignored. See: [Extraneous parameters](#features-1)
 
 <br>
 
@@ -420,8 +500,8 @@ What this feature does:
 * Each previous successful eligible command is saved (up to 10 of the latest ones). Hence, if there are sufficient such saved commands, you can execute `undo` up to 10 times on the 10 eligible commands in a consecutive sequence.
 * You can only undo commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to do `undo` on those commands from previous sessions.
 
-Other details:
-* The only meaningful way to use this command is to type `undo` itself; any other parameters will be ignored. See: [Extraneous parameters](#features-1)
+Additional notes:
+* Extraneous parameters are ignored (for example, `undo now` or `undo 3` is treated as `undo`). See: [Extraneous parameters](#features-1)
 * `undo` is intended as a quality of life feature primarily to save time that would be spent reversing a few of the most recent changes if users change their mind. Given this, and that most users are likely to only undo a few recent actions, limiting undo to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour arising from a large number of reversals. 
 
 Examples:
@@ -476,7 +556,7 @@ You can pre-fill the command box with your last successful commands using the **
 * Confirmatory commands like 'y' and 'n' are not saved.
 * You can only cycle through commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to toggle/cycle through them.
 
-Other details:
+Additional notes:
 * This command history cycling feature is intended as a quality of life feature primarily to save time that would be spent re-typing similar commands. Given this, and that most users are likely to only use a few of the most recent commands, limiting cycling to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour. 
 
 <br>
@@ -524,7 +604,7 @@ Action     | Format, Examples
 **List**   | `list`
 **Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com r/Software Engineer d/Engineering t/friend t/colleague`
 **Search** | `search KEYWORD...`<br> e.g., `search James`
-**Stat** | `stat MODE`<br> e.g., `stat dept`, `stat tag`
+**Stat** | `stat MODE`<br> e.g., `stat tag`, `stat dept`, `stat role`
 **Cycle commands** | up/down arrow keys
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com d/Finance`
 **Delete** | `delete INDEX [MORE_INDEXES]` or `del INDEX [MORE_INDEXES]`<br> e.g., `delete 3`, `delete 1 4 5`
@@ -532,8 +612,3 @@ Action     | Format, Examples
 **Import** | `import [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
 **Export** | `export [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
 **Exit**   | `exit`
-
-
-
-
-
