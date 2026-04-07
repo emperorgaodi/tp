@@ -309,7 +309,6 @@ Clears all entries from HRmanager; that is, delete all employees.
 Format: `clear`
 
 Tips:
-* This action is **permanent**! There is no going back, so be sure about it. Not even [`undo`](#undo-an-executed-command--undo) can save you.
 * The only meaningful way to use this command is to type `clear` itself, any other parameters will be ignored. See: [Extraneous parameters](#features-1)
 
 <box type="info" seamless>
@@ -372,7 +371,7 @@ Since HRmanager stores **sensitive employee data** (personal information, contac
 * `clear` - When clearing all entries
 * `exit` - When closing the application
 * `import` - When importing data into the application from a file
-* `import` - When exporting data from the application to a file
+* `export` - When exporting data from the application to a file
 
 **How confirmation works:**
 1. After you enter one of the above commands, a confirmation prompt will appear displaying:
