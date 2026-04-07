@@ -398,9 +398,19 @@ Examples:
 
 ### Import/Export employee data : `import` or `export`
 
-Exports the current list of employees into a CSV file, saved into user-specified local destination.
+Exports the current list of employees into a CSV (comma-separated values) file, saved into user-specified local destination.
 
 Format: `export [FILE PATH]`
+
+Notes:
+* The full list of employees is exported, even when your view of the list is narrowed using the search function.
+* [FILE PATH] must end in ".csv". Exporting to other file formats is currently not supported.
+* Entering only a file name (e.g. "employees.csv") will export the current list into HRmanager's home folder.
+* No overwriting of local files is allowed.
+
+Exported file format:
+
+> **PNG placeholder:** Insert a screenshot here, e.g. `images/exported-csv-placeholder.png`
 
 <br>
 
