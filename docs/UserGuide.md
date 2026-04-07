@@ -141,7 +141,13 @@ Additional constraints:
 * If two employees share the same real-world name, include a differentiating suffix (eg. nickname) in the name itself (for example, `John Doe - Johnny` and `John Doe - Joe`) so that both names are unique.
 * If two employees share the same real-world name, include a differentiating suffix (eg. nickname) in the name itself (for example, `John Doe - Johnny` and `John Doe - Joe`) so that both names are unique.
 * Names are normalized to lowercase when stored in HRmanager.
-* HRmanager currently restricts names to alphanumeric characters, hyphens, and spaces only. This means names containing: __Diacritics/accents__ (e.g., Müller, Josée, Piñata), __Non-Latin scripts__ (e.g., 王小明, 田中, 김철수) and __Special punctuation__ (e.g., O'Connor, D'Angelo) are not supported in the current version. The workaround is to use the closest ASCII equivalent or romanized version of the name. (e.g., `Muller`, `Josee`, `Pinata`, `Wang Xiaoming`, `Tian Zhong`, `Kim Cheolsu`, `OConnor`, `DAngelo`)
+* HRmanager currently restricts names to alphanumeric characters, hyphens, and spaces only. This means names containing:
+
+- __Diacritics/accents__ (e.g., Müller, Josée, Piñata)
+- __Non-Latin scripts__ (e.g., 王小明, 田中, 김철수) 
+- __Special punctuation__ (e.g., O'Connor, D'Angelo, s/o, d/o) 
+
+are not supported in the current version. The workaround is to use the closest ASCII equivalent or romanized version of the name. (e.g., `Muller`, `Josee`, `Pinata`, `Wang Xiaoming`, `Tian Zhong`, `Kim Cheolsu`, `OConnor`, `DAngelo`, `Rajesh son of Suresh`, `Anita daughter of Kumar`)
 * Since phone numbers are not allowed to have spaces, extensions, or country codes, it is recommended to use a tag to store any additional information related to the phone number. For example, if an employee has a phone number with an extension, you can add the extension as a tag (e.g., `t/ext 1234`). Or if an employee has a country code, you can add the country code as a tag (e.g., `t/sg phone country code` for Singapore). This way, you can still keep track of important details related to the phone number while adhering to the input restrictions.
 
 Examples:
