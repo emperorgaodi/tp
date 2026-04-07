@@ -189,11 +189,19 @@ public class CsvImportUtil {
             return Set.of();
         }
         try {
-            return Arrays.stream(raw.split(","))
-                .map(String::trim)
-                .filter(t -> !t.isEmpty())
-                .map(Tag::new)
-                .collect(Collectors.toSet());
+            Set<Tag> tags = Arrays.stream(raw.split(","))
+                    .map(String::trim)
+                    .filter(t -> !t.isEmpty())
+                    .map(Tag::new)
+                    .collect(Collectors.toSet());
+
+            if (tags.size() > Person.MAX_TAG_COUNT) {
+                throw new CsvParseException(
+                        String.format("Line %d: " + Tag.MESSAGE_TAG_COUNT_CONSTRAINTS,
+                                lineNumber, Person.MAX_TAG_COUNT, tags.size()));
+            }
+
+            return tags;
         } catch (IllegalArgumentException e) {
             throw new CsvParseException(
                 String.format("Line %d: invalid tag — %s", lineNumber, e.getMessage()), e);
