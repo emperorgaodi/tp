@@ -84,7 +84,10 @@ public class EditCommandParser implements Parser<EditCommand> {
         if (tags.isEmpty()) {
             return Optional.empty();
         }
-        Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
+
+        boolean isClearTagsCommand = tags.size() == 1 && tags.contains("");
+        Collection<String> tagSet = isClearTagsCommand ? Collections.emptySet() : tags;
+
         return Optional.of(ParserUtil.parseTags(tagSet));
     }
 

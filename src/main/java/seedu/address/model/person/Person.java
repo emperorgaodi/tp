@@ -18,8 +18,6 @@ import seedu.address.model.tag.Tag;
 public class Person {
 
     public static final int MAX_TAG_COUNT = 20;
-    public static final String MESSAGE_TAG_COUNT_CONSTRAINTS =
-            "Each employee can have at most " + MAX_TAG_COUNT + " tags.";
 
     // Identity fields
     private final Name name;
@@ -36,7 +34,7 @@ public class Person {
      */
     public Person(Name name, Phone phone, Email email, Role role, Department department, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, role, department, tags);
-        checkArgument(tags.size() <= MAX_TAG_COUNT, MESSAGE_TAG_COUNT_CONSTRAINTS);
+        checkArgument(tags.size() <= MAX_TAG_COUNT, Tag.MESSAGE_TAG_COUNT_CONSTRAINTS);
         this.name = name;
         this.phone = phone;
         this.email = email;
