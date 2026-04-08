@@ -6,7 +6,7 @@
 
 # HRmanager User Guide
 
-HRmanager is a **desktop app for managing employee and applicant records, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, HRmanager can help you manage HR records faster than traditional GUI apps.
+HRmanager is a **desktop app for managing employee and applicant records, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). That is, based on typing commands instead of clicking buttons. If you can type fast, HRmanager can help you manage HR records faster than traditional GUI apps.
 
 <!-- * Table of Contents -->
 <page-nav-print />
@@ -48,15 +48,22 @@ Here is a quick guide to jump straight to the section you need:
 ## Quick start
 
 1. Ensure you have Java `17` or above installed in your Computer.<br>
-   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+   For Windows Users:
+    * Open a command terminal (press Windows Key, enter "terminal", and open the terminal app)
+    * Type `java -version` and press enter.
+    * Check that `java version <version number>` is Java `17` or above.<br>
+    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
 2. Download the latest `.jar` file from [the HRmanager releases page](https://github.com/AY2526S2-CS2103T-T13-1/tp/releases).
 
-3. Copy the file to the folder you want to use as the _home folder_ for HRmanager.
+3. Copy the file to the folder you want to use as the _home folder_ for HRmanager. Future app-related data will be generated in this folder.
 
-4. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar HRmanager.jar` command to run the application.<br>
-   A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+4. Run the application. 
+   * Open a command terminal.
+   * Type `cd <HRmanager home folder>` to `cd` into the folder you put the jar file in.
+   * Use the `java -jar HRmanager.jar` command to run the application.<br>
+      A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
+      ![Ui](images/Ui.png)
 
 5. Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
    Some example commands you can try:
@@ -155,6 +162,7 @@ Additional notes:
     - **Unsupported:** Diacritics (Müller), non-Latin scripts (王小明), special punctuation (O'Connor, s/o)
     - **Workaround:** Use ASCII equivalents (`Muller`, `Wang Xiaoming`, `OConnor`, `son of`)
 * Phone numbers accept only digits (3-16). Use tags for extensions or country codes (e.g., `t/ext 1234`, `t/sg`).
+* HRmanager has maximum capacity of 200 employees. To add new employees at full capacity, remove existing ones first.
 
 Successful command output:
 
@@ -384,7 +392,7 @@ Examples:
 
 Additional notes:
 * The target file must be a `.csv` file with a valid header row: `name, phone, email, role, department, tags` (tags optional, any order).
-* File size limit: 1MB. Employee limit: 200 employees.
+* File size limit: 100kB. Employee limit: 200 employees.
 * All data validation rules apply (e.g., no duplicate names, invalid or missing fields). [Parameter restrictions](#Parameter-restrictions-for-each-field)
 * When multiple errors exist, only the first error is reported.
 

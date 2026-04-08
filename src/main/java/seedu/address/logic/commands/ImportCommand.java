@@ -9,7 +9,9 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.CsvParseException;
 import seedu.address.commons.util.CsvImportUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -56,6 +58,8 @@ public class ImportCommand extends Command implements ConfirmableCommand {
     public static final String MESSAGE_EMPTY_FILE =
         "Target file is empty!\nTo clear current list, use 'clear' command.";
 
+    private static final Logger logger = LogsCenter.getLogger(ImportCommand.class);
+
     private final String filePath;
     private Path validatedPath;
     private List<Person> validatedPersons;
@@ -97,6 +101,8 @@ public class ImportCommand extends Command implements ConfirmableCommand {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
+        logger.fine("Executing import");
+
         Path path = validatedPath;
         List<Person> persons = validatedPersons;
 
@@ -117,6 +123,7 @@ public class ImportCommand extends Command implements ConfirmableCommand {
         persons.forEach(newBook::addPerson);
         model.setAddressBook(newBook);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        logger.fine("Successfully imported list from " + validatedPath);
 
         return new CommandResult(
             String.format(MESSAGE_SUCCESS, persons.size(), path.toAbsolutePath()));
@@ -138,6 +145,7 @@ public class ImportCommand extends Command implements ConfirmableCommand {
      * */
     private void validatePath(Path path) throws CommandException {
         if (!Files.exists(path)) {
+            logger.fine("File not found for import command");
             throw new CommandException(String.format(MESSAGE_FILE_NOT_FOUND, path));
         }
         if (!Files.isRegularFile(path)) {

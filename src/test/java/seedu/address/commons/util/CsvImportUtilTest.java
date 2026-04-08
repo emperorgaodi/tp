@@ -2,6 +2,7 @@ package seedu.address.commons.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import java.io.IOException;
@@ -138,6 +139,18 @@ public class CsvImportUtilTest {
             "name,role,department,email",
             "Alice Tan,Software Engineer,Backend,alice@example.com"
         );
+        assertThrows(CsvParseException.class, () -> parser.parse(csv));
+    }
+
+    @Test
+    void parse_overLimit_throwsCsvParseException() throws Exception {
+        // Write max+1 rows to exceed limit
+        StringBuilder content = new StringBuilder("name,phone,email,role,department\n");
+        for (int i = 1; i <= MAX_SIZE + 1; i++) {
+            content.append(String.format("Person %d,91234%d,person%d@example.com,Role%d,Dept%d\n",
+                i, 500 + i, i, i, i));
+        }
+        Path csv = writeCsv(content.toString());
         assertThrows(CsvParseException.class, () -> parser.parse(csv));
     }
 

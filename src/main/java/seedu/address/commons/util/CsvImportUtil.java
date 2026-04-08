@@ -1,5 +1,7 @@
 package seedu.address.commons.util;
 
+import static seedu.address.model.AddressBook.MAX_SIZE;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,9 +87,9 @@ public class CsvImportUtil {
             List<String> names = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                employeeNumber++;
-                if (employeeNumber > 200) {
-                    throw new CsvParseException("Max 200 employees allowed.");
+                if (employeeNumber >= MAX_SIZE) {
+                    throw new CsvParseException(String.format(
+                        "Your import file is too large.\nHRmanager supports a maximum of %d employees.", MAX_SIZE));
                 }
                 if (line.isBlank()) {
                     continue; // skip blank rows silently
@@ -100,6 +102,7 @@ public class CsvImportUtil {
                         names.indexOf(person.getName().toString()), lineNumber, person.getName()));
                 }
                 persons.add(person);
+                employeeNumber++;
                 names.add(person.getName().toString());
             }
         }

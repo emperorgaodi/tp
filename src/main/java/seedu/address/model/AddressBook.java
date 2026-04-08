@@ -15,6 +15,7 @@ import seedu.address.model.person.UniquePersonList;
  */
 public class AddressBook implements ReadOnlyAddressBook {
 
+    public static final int MAX_SIZE = 200;
     private final UniquePersonList persons;
 
     /*
