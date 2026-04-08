@@ -44,6 +44,10 @@ public class AddCommand extends Command {
     public static final String MESSAGE_SUCCESS = "New employee added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This employee already exists in HRmanager";
 
+    public static final int MAX_SIZE = 200;
+    public static final String MESSAGE_OVER_LIMIT = String.format(
+        "You are already at max capacity!\nHRmanager supports a maximum of %d employees.", MAX_SIZE);
+
     private static final Logger logger = LogsCenter.getLogger(AddCommand.class);
 
     private final Person toAdd;
@@ -61,6 +65,10 @@ public class AddCommand extends Command {
         requireNonNull(model);
         logger.info("Attempting to add person: " + toAdd.getName());
 
+        if (model.getAddressBook().getPersonList().size() >= MAX_SIZE) {
+            handleModelOverSizeLimit();
+        }
+
         if (hasDuplicatePerson(model)) {
             handleDuplicatePersonInModel();
         }
@@ -77,6 +85,10 @@ public class AddCommand extends Command {
     private void handleDuplicatePersonInModel() throws CommandException {
         logger.warning("Duplicate person attempted: " + toAdd.getName());
         throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+    }
+
+    private void handleModelOverSizeLimit() throws CommandException {
+        throw new CommandException(MESSAGE_OVER_LIMIT);
     }
 
     private void addPersonToModel(Model model) {

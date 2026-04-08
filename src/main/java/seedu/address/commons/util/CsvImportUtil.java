@@ -24,6 +24,7 @@ import seedu.address.model.tag.Tag;
  * Utility class for parsing a CSV file into a list of {@link Person} objects.
  */
 public class CsvImportUtil {
+    public static final int MAX_SIZE = 200;
     // Recognised header names (case-insensitive)
     private static final String HEADER_NAME = "name";
     private static final String HEADER_PHONE = "phone";
@@ -85,9 +86,9 @@ public class CsvImportUtil {
             List<String> names = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                employeeNumber++;
-                if (employeeNumber > 200) {
-                    throw new CsvParseException("Max 200 employees allowed.");
+                if (employeeNumber > MAX_SIZE) {
+                    throw new CsvParseException(String.format(
+                        "Your import file is too large.\nHRmanager supports a maximum of %d employees.", MAX_SIZE));
                 }
                 if (line.isBlank()) {
                     continue; // skip blank rows silently
@@ -100,6 +101,7 @@ public class CsvImportUtil {
                         names.indexOf(person.getName().toString()), lineNumber, person.getName()));
                 }
                 persons.add(person);
+                employeeNumber++;
                 names.add(person.getName().toString());
             }
         }
