@@ -7,6 +7,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 
 import java.util.logging.Logger;
 
@@ -44,7 +45,6 @@ public class AddCommand extends Command {
     public static final String MESSAGE_SUCCESS = "New employee added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This employee already exists in HRmanager";
 
-    public static final int MAX_SIZE = 200;
     public static final String MESSAGE_OVER_LIMIT = String.format(
         "You are already at max capacity!\nHRmanager supports a maximum of %d employees.", MAX_SIZE);
 

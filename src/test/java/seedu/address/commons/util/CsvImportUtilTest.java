@@ -2,6 +2,7 @@ package seedu.address.commons.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import java.io.IOException;
@@ -143,9 +144,9 @@ public class CsvImportUtilTest {
 
     @Test
     void parse_overLimit_throwsCsvParseException() throws Exception {
-        // Write 201 rows to exceed the 200 limit
+        // Write max+1 rows to exceed limit
         StringBuilder content = new StringBuilder("name,phone,email,role,department\n");
-        for (int i = 1; i <= 201; i++) {
+        for (int i = 1; i <= MAX_SIZE + 1; i++) {
             content.append(String.format("Person %d,91234%d,person%d@example.com,Role%d,Dept%d\n",
                 i, 500 + i, i, i, i));
         }

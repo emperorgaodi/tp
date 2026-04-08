@@ -1,5 +1,7 @@
 package seedu.address.commons.util;
 
+import static seedu.address.model.AddressBook.MAX_SIZE;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +26,6 @@ import seedu.address.model.tag.Tag;
  * Utility class for parsing a CSV file into a list of {@link Person} objects.
  */
 public class CsvImportUtil {
-    public static final int MAX_SIZE = 200;
     // Recognised header names (case-insensitive)
     private static final String HEADER_NAME = "name";
     private static final String HEADER_PHONE = "phone";

@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 
@@ -252,7 +253,7 @@ public class AddCommandTest {
         @Override
         public void addPerson(Person person) {
             requireNonNull(person);
-            if (personsAdded.size() >= 200) {
+            if (personsAdded.size() >= MAX_SIZE) {
                 throw new RuntimeException(AddCommand.MESSAGE_OVER_LIMIT);
             }
             personsAdded.add(person);
@@ -262,7 +263,7 @@ public class AddCommandTest {
         public ReadOnlyAddressBook getAddressBook() {
             AddressBook addressBook = new AddressBook();
             // Fill the address book with 200 persons to reach the limit
-            for (int i = 0; i < 200; i++) {
+            for (int i = 0; i < MAX_SIZE; i++) {
                 addressBook.addPerson(new PersonBuilder().withName("Person " + i).build());
             }
             return addressBook;
