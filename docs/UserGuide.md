@@ -48,15 +48,22 @@ Here is a quick guide to jump straight to the section you need:
 ## Quick start
 
 1. Ensure you have Java `17` or above installed in your Computer.<br>
-   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+   For Windows Users:
+    * Open a command terminal (press Windows Key, enter "terminal", and open the terminal app)
+    * Type `java -version` and press enter.
+    * Check that `java version <version number>` is Java `17` or above.<br>
+    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
 2. Download the latest `.jar` file from [the HRmanager releases page](https://github.com/AY2526S2-CS2103T-T13-1/tp/releases).
 
-3. Copy the file to the folder you want to use as the _home folder_ for HRmanager.
+3. Copy the file to the folder you want to use as the _home folder_ for HRmanager. Future app-related data will be generated in this folder.
 
-4. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar HRmanager.jar` command to run the application.<br>
-   A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+4. Run the application. 
+   * Open a command terminal.
+   * Type `cd <HRmanager home folder>` to `cd` into the folder you put the jar file in.
+   * Use the `java -jar HRmanager.jar` command to run the application.<br>
+      A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
+      ![Ui](images/Ui.png)
 
 5. Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
    Some example commands you can try:
