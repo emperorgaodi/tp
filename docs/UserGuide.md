@@ -264,6 +264,7 @@ Examples:
 * `stat r` switches the dashboard to role distribution mode.
 
 Additional notes:
+* By default, the dashboard starts in department mode when you launch the app.
 * Exactly **one** mode must be provided. Mode is case-insensitive (`t`, `tag`, `d`, `dept`, `department`, `r`, `role`).
 * Uses the **full employee dataset** (unaffected by on-screen filters like `search`).
 * **Tag mode:** Unique tags, most common tag, employees with/without tags, tag distribution.
@@ -646,7 +647,7 @@ Furthermore, certain edits can cause HRmanager to behave in unexpected ways (e.g
 1. Support for non-ASCII characters (e.g., diacritics/accents, non-Latin scripts, and special punctuation) in employee names.
 2. Support for importing and exporting in file formats other than CSV.
 3. Support the management of more employees by increasing the storage limit.
-4. Searchor and Searchand features to allow more powerful searching capabilities.
+4. Searchor and Searchand features to allow more powerful and diverse searching capabilities.
 
 <br>
 
