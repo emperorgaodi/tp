@@ -13,7 +13,22 @@
 
 ## **Acknowledgements**
 
-_{ list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well }_
+### AI usage
+
+Qiyang: @qyscode
+Extensive use of ChatGPT, Gemini, GitHub Copilot, IntelliJ Copilot to plan and write code (implementation) through auto-complete,  debugging and code-generation.
+
+Ruben: @1rubzz
+GitHub Copilot was used as a supplementary tool during development. It was primarily used for auto-completion and assisting with test case construction. Its use was limited to selected components (e.g., DeleteCommand, StatsPanel, and statistics-related classes)
+
+Wei Jie: @emperorgaodi 
+Extensive use of IntelliJ IDE autocomplete tool and deepseek AI to plan/write code.
+
+Minh: @moonmertens
+Extensive use of Copilot to plan and write code.
+
+Natalia: @petelectron
+Claude was used to refine failing tests and non-compiling code. GitHub Copilot was used to review failing PRs.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -450,8 +465,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. User requests to remove one or more employees by specifying their index numbers in the displayed list.
 2. System validates the provided index numbers.
-3. System removes the corresponding employee records from the system.
-4. System displays a confirmation message indicating the number of employees deleted.
+3. System prompts the user for confirmation that they want to execute a deletion.
+4. User confirms their intent to execute a 'delete' command, entering 'y'.
+5. System removes the corresponding employee records from the system.
+6. System displays a confirmation message indicating the number of employees deleted.
 
     Use case ends.
 
@@ -466,6 +483,12 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 2a. One or more indexes are invalid (e.g., index exceeds list size).
     * 2a1. System displays an error message indicating the invalid index.
+    * 2a2. User modifies the command until the index is valid.
+
+    Use case resumes from step 2.
+
+* 4a. User enter 'n' instead.
+    * 4a1. System displays a response indicating that the command was aborted.
 
     Use case ends.
 
@@ -494,8 +517,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1.  User enters the `search` command with one or more keywords.
 2.  System validates the search input.
 3.  System processes the search query against the existing employee records.
-4.  System displays a list of all employees that match the search.
-   Matching is case-insensitive, supports partial substring matching across all fields, and returns employees whose fields contain any of the supplied keywords.
+4.  System displays a filtered list of all employees that match the search.
+    Matching is case-insensitive, supports partial substring matching across all fields, and returns employees whose fields contain any of the supplied keywords.
 
     Use case ends.
 
@@ -512,7 +535,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     Use case resumes at step 1.
 
 * 3a. No employees match the provided search query.
-    * 3a1. System displays `0 employees listed!`.
+    * 3a1. System displays an empty list and `0 employees listed!`.
+
+    Use case ends.
+
+* 4a. The user than wants to return to the full non-filtered list of employees.
+    * 4a1. User executes `list` to [view employees](#use-case-3-uc3-view-employees) (UC3).
+    * 4a2. The system shows the full non-filtered list of employees.
 
     Use case ends.
 
@@ -521,39 +550,46 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1. User searches for employee. (UC4)
-2. System shows list of employees.
-3. User requests to tag a specific employee in the list.
-4. System requests for the tag name.
-5. User provides tag name.
-6. System adds the tag to an employee and updates the list
+1. User [searches](#use-case-4-uc4-search-for-an-employee) for employee. (UC4)
+2. System shows list of employees. (Steps 1 and 2 are necessary to see the changes)
+3. User requests to edit a specific employee in the list, modifying the person's tag(s).
+4. System prompts the user for confirmation that they want to execute a 'edit'.
+5. User confirms their intent to execute a 'edit' command, entering 'y'.
+6. System edits that employee, deleting all previous tags, and adding the given tags.
+7. System displays a confirmation message showing that the employee has been edited, and their new details.
 
-   Use case ends.
+    Use case ends.
 
 **Extensions**
 
 * 2a. The list is empty.
-    * 2a1. System informs user that there are no employees to tag.
 
-    Use case ends.
+    Use case ends. (The person to tag does not exist)
 
 * 3a. The given index is invalid.
     * 3a1. System shows an error message.
-
-    Use case resumes at step 1.
-
-* 5a. The tag name provided is already associated with this employee.
-    * 5a1. System shows an error message indicating the tag is a duplicate.
-
-    Use case resumes at step 2.
-
-* 5b. The tag name provided is invalid (e.g., blank, exceeds 30 characters, or contains non-alphanumeric characters).
-    * 5b1. System shows an error message: "Tags should only consist of alphanumeric characters, hyphens and spaces, and be between 1 and 30 characters long. The tag should not start or end with a space or hyphen, and it should not contain consecutive spaces or hyphens."
+    * 3a2. The user modifies their command until the index is valid.
 
     Use case resumes at step 4.
 
-* a. At any time, the User chooses to cancel the tagging operation.
-    * a1. System cancels the tagging.
+* 3b. The tag name provided is already associated with this employee.
+    * 3b1. There is no problem. The action proceeds anyway, though there is essentially no change at step 6.
+
+    Use case resumes at step 4.
+
+* 3c. The tag provided is invalid (e.g., exceeds 30 characters, or contains non-alphanumeric characters).
+    * 3c1. System shows an error message: "Tags should only consist of alphanumeric characters, hyphens and spaces, and be between 1 and 30 characters long. The tag should not start or end with a space or hyphen, and it should not contain consecutive spaces or hyphens."
+    * 3c2. The user modifies their command until the tag(s) is/are valid.
+
+    Use case resumes at step 4.
+
+* 3d. The tag provided is blank, e.g., "edit 4 t/" (This is the way to delete tags)
+    * 3d1. The execution proceeds. The result is that at step 6, the employee at the given index has all their tags deleted.
+
+    Use case resumes at step 4.
+
+* 5a. User enter 'n' instead.
+    * 5a1. System displays a response indicating that the command was aborted.
 
     Use case ends.
 
@@ -562,66 +598,75 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1. User requests to edit employee details.
-2. System retrieves the employee based on user's provided index.
-3. User enters the details to be updated (any of `name`, `phone`, `email`, `role`, `department`, tags).
-4. System updates the employee's details accordingly, and displays the updated employee information.
+1. User requests to edit employee details, with the employee's index in the list, and enters the details to be updated (any combination of `name`, `phone`, `email`, `role`, `department`, tags).
+2. System prompts the user for confirmation that they want to execute a 'edit'.
+3. User confirms their intent to execute a 'edit' command, entering 'y'.
+4. System edits that employee, deleting all previous tags, and adding the given tags.
+5. System displays a confirmation message showing that the employee has been edited, and their new details.
 
 **Extensions**
 
 * 1a. The user enters the command in the incorrect format.
-    * 1a1. System shows an error message.
+    * 1a1. System shows an error message, along with the correct format for an edit command.
 
     Use case resumes at step 1.
 
-* 2a. The user entered an invalid index.
-    * 2a1. System shows an error message.
+* 1b. The given index is invalid.
+    * 1b1. System shows an error message.
+    * 1b2. The user modifies their command until the index is valid.
+
+    Use case resumes at step 2.
+
+* 1c. The user's proposed details are invalid.
+    * 1c1. The system shows an error message for the relevant field for which the input restrictions are not adhered to.
+    * 1c2. The user modifies their inputs until all of the proposed parameters are accepted.
+
+    Use case resumes at step 2.
+
+* 1d. User enters empty details.
+    * 1d1. System shows an error message: "At least one field to edit must be provided."
 
     Use case resumes at step 1.
 
-* 3a. User's given details are invalid.
-    * 3a1. System shows an error message.
+* 3a. User enter 'n' instead.
+    * 3a1. System displays a response indicating that the command was aborted.
 
-    Use case resumes at step 3.
-
-* 3b. User enters empty details.
-    * 3b1. System shows an error message.
-
-    Use case resumes at step 3.
+    Use case ends.
 
 
 ### Use case 7 (UC7): Cycle through previous executed commands
 
 **MSS**
 
-1.  User requests to edit an employee's phone number.
-2.  System edits the employee's phone number in the records.
-3.  System displays confirmation message.
+1.  User requests to {edit an employee's phone number}*. (Edit is an example. It can be any command)
+2.  System {edits the employee's phone number in the records}.
+3.  System {displays confirmation message}. (If the command is confirmable)
 4.  User suddenly recalls that they have forgotten to also edit the employee's email address.
 5.  User presses the up arrow (PgUp) key in the CLI.
-6.  System prefills the CLI with the command used in step 1.
-7.  User deletes the phone field and types the email details, then enters the command. (The command "edit" and the relevant employee index is already prepared)
-6.  System edits the employee's email address in the records.
+6.  System prefills the CLI with the command used in step 5.
+7.  User deletes the {phone field} and types {the email details}, then enters the command. (The command {"edit"} and the relevant {employee index} is already prepared)
+8.  System {edits the employee's email address in the records}.
 
     Use case ends.
 
 **Extensions**
 
-* 1a. There are no previous successfully executed commands.
-    * 1a1. System does not do anything in response to up arrow (PgUp) key.
-
-    Use case ends.
-
-* 2a. There are up to 5 previous successfully executed commands.
-    * 2a1. User presses up arrow (PgUp) key until their desired previous executed command appears. If there is already an input in the CLI, it is saved.
-    * 2a2. User either modifies or does not modify their desired previous command, and enters it, or, user presses down arrow (PgDn) key to get back to the more recent/original command.
-
-    Use case ends.
-
-* 2a1. User enters more than 5 commands.
+* 2a. User has entered more than 10 unique commands.
     * 2a1. The oldest command is discarded and can no longer be cycled through.
 
     Use case ends.
+
+* 5a. There are no previous successfully executed commands.
+    * 5a1. System does not do anything in response to up arrow (PgUp) key.
+
+    Use case ends.
+
+* 6a. There are up to 10 previous successfully executed commands. User presses up arrow (PgUp) again.
+    * 6a1. User presses up arrow (PgUp) key until their desired previous executed command appears. If there is already an input in the CLI, it is saved. User can also press down arrow (PgDn) key to get back to the more recent/original command.
+    * 6a2. User stops cycling at their desired past/current command.
+
+    Use case resumes at step 7.
+
 
 ### Use case 8 (UC8): Importing employee data
 
@@ -722,13 +767,11 @@ testers are expected to do more *exploratory* testing.
    2. Re-launch the app by double-clicking the jar file.<br>
        Expected: The most recent window size and location is retained.
 
-1. _{ more test cases …​ }_
-
 ### Adding an employee
 
 1. Adding an employee, along with their details.
 
-    1. Prerequisites: List all employees using the `list` command. There are no existing employees in the list.
+    1. Prerequisites: List all employees using the `list` command. There are no existing employees in the list. Otherwise, use `clear`.
 
     2. Test case: `add n/Bob Choo p/22222222 e/bob@example.com r/Head of Office d/Operations t/friend` (Valid entry)<br>
        Expected: The employee is added. The success message is shown, along with the added details.
@@ -737,60 +780,72 @@ testers are expected to do more *exploratory* testing.
        Expected: The employee is added. The success message is shown, along with the added details.
 
     4. Test case: `add k n/Amy Choo p/22222222 e/amy@example.com r/Head of Office d/Operations t/friend` (Preamble is not a space)<br>
-       Expected: The employee is not added. Error message for invalid command format,along with an example of the correct format, shown.
+       Expected: The employee is not added. Error message for invalid command format, along with an example of the correct format, shown.
 
     5. Test case: `add n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Same exact name with existing entry, despite different details)<br>
-       Expected: The employee is not added. Duplicate error message is shown, indicating an employee with same name already exists.
+       Expected: The employee is not added. Duplicate error message is shown, indicating the employee (with same name) already exists.
 
-    6. Test case: `add  n/Lance Choo p/33333333 e/lance@example.com r/Head of HR d/Human Resources t/friend t/friend t/husband` (Multiple tags)<br>
+    6. Test case: `add n/bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Same exact name with different case. Name check is case insensitive.)<br>
+       Expected: The employee is not added. Duplicate error message is shown, indicating the employee (with same name) already exists.
+
+    7. Test case: `add n/Lance Choo p/33333333 e/lance@example.com r/Head of HR d/Human Resources t/friend t/friend t/husband` (Multiple tags)<br>
        Expected: The employee is added. The success message is shown, along with the added details. Note that duplicate tags are accepted as one tag.
 
-    7. Test case: `add n/Amy Cho n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Two names))<br>
+    8. Test case: `add n/Justin p/33333333 e/lance@example.com r/Head of HR d/Human Resources` (No tags. Tags are optional)<br>
+       Expected: The employee is added. The success message is shown, along with the added details. Note that duplicate tags are accepted as one tag.
+
+    9. Test case: `add n/Amy Cho n/Bob Cho p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Two names))<br>
        Expected: The employee is not added. Error messages for duplicated prefix shown.
 
-    8. Other incorrect commands with duplicated attributes for the same employee: `add <other details> p/11111111 p/22222222`, `add <other details> e/amy@example.com e/bob@example.com`, or similar<br>
+    10. Other incorrect commands with duplicated attributes for the same employee: `add <other details> p/11111111 p/22222222`, `add <other details> e/amy@example.com e/bob@example.com`, or similar<br>
        Expected: The employee is not added. Error messages for duplicated prefix shown.
 
-    9. Test case: `add n/James& p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Invalid name)<br>
+    11. Test case: `add n/James& p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Invalid name)<br>
        Expected: The employee is not added. The correct format for a valid name is shown.
 
-    10. Other incorrect commands with invalid data: `add <other details> p/abc` (Non-numeric phone number) or similar<br>
+    12. Other incorrect commands with invalid data: `add <other details> p/abc` (Non-numeric phone number) or similar<br>
         Expected: The employee is not added. The correct format for the attribute for which the argument is invalid is shown.
 
-    11. Test case: `add n/Pikachu p/11111111 e/bob@meme.com r/Head of Operations d/Operations` (No optional Tag)<br>
-        Expected: The employee is added. The success message is shown, along with the added details.
-
-    12. Test case: `add n/Peppa Pig e/peppa@example.com r/Head of Media d/Media` (No phone number) or similar absence of necessary attributes <br>
-        Expected: The employee is not added. Error message is shown, along with the correct format and required parameters.
+    13. Test case: `add n/Peppa Pig e/peppa@example.com r/Head of Media d/Media` (No phone number) or similar absence of necessary attributes <br>
+        Expected: The employee is not added. Error message is shown, along with the correct format and required parameters for add.
 
     14. Other incorrect delete commands to try: `add`, `add johndoe p/3333` (no prefix), and other commands which deviate from the command format<br>
         Expected: Similar to previous.
 
 ### Deleting an employee
 
-1. Deleting one or more employees while all employees are being shown
+1. Deleting one or more employees while all employees are being shown. NOTE: If the command is valid, the confirmation feature is first triggered. The tester enters 'y' to proceed.
 
-   1. Prerequisites: List all employee using the `list` command. Multiple employees in the list.
+   1. Prerequisites: List all employee using the `list` command. Before each test cases, the number of employees in the (filtered) list is more than or equal to the number of valid arguments given.
 
    2. Test case: `delete 1`<br>
-      Expected: First employee is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
+      Expected: First employee is deleted from the list. Details of the deleted contact shown in the status message.
 
-   3. Test case: `delete 0`<br>
-      Expected: No employee is deleted. Error details shown in the status message. Status bar remains the same.
+   3. Test case: `delete 1 3 5`<br>
+      Expected: 1st, 3rd, and 5th employee are deleted from the list. Status message shows "Deleted employee(s): 3 employee(s)".
 
-   4. Test case: `delete 1 3 5`<br>
-      Expected: 1st, 3rd, and 5th employee are deleted from the list. Status message shows "Deleted employee(s): 3 employee(s)". Timestamp in the status bar is updated.
-
-   5. Test case: `delete 1 1 2`<br>
+   4. Test case: `delete 1 1 2`<br>
       Expected: Only 2 unique employees are deleted (duplicate index filtered out). Status message shows "Deleted employee(s): 2 employee(s)". Only the 1st and 2nd persons are removed.
 
-   6. Test case: `delete 2 1 3`<br>
+   5. Test case: `delete 2 1 3`<br>
       Expected: 1st, 2nd, and 3rd employees are deleted (regardless of order provided). Status message shows "Deleted employee(s): 3 employee(s)". Deletion performed from highest to lowest index to prevent index shifting errors.
 
-   7. Test case: `delete 1 2 999`<br>
-      Expected: No employee is deleted. Error details shown for invalid index 999. Status bar remains the same.
+   6. Test case: `delete 1 2 999`<br> (Prerequisite: there are less than 999 entries/employees)
+      Expected: No employee is deleted. Error details shown for an invalid index (because of 999).
 
-   8. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
+   7. All test cases, except `del` is used instead of `delete`. E.g.: `del 1`<br>
+      Expected: Same exact behaviour as `delete`
+
+   8. Test case: `delete`, `del`, `delete -3`, `delete a`, `del 0` or similar <br> (No index provided or index is invalid)
+      Expected: No employee is deleted. Invalid command format error shown, along with the details for a correct delete command.
+
+   9. Test case: `delete 1 2 3 4 5 6 7 8 9 10`<br>
+      Expected: 10 employees deleted. Status message shows "Deleted employee(s): 10 employee(s)".
+   
+   10. Test case: `delete 1 2 3 4 5 6 7 8 9 10 11`<br>
+      Expected: No employee is deleted. Error shown: "Too many indexes specified."
+
+   11. Other incorrect delete commands to try: `delete x` (where x is larger than the list size), `del 1 2 a`, `del a`, `del 1 ` (trailing whitespace), `del      1` (preamble has many spaces), `del #`, etc.<br>
       Expected: Similar error handling to above.
 
 2. Deleting a employee from a filtered list (search results)
@@ -806,34 +861,9 @@ testers are expected to do more *exploratory* testing.
    4. Test case: `search KEYWORD` (where KEYWORD returns no matches) followed by `delete 1`<br>
       Expected: Error message shown for invalid index since filtered list is empty.
 
-### Tagging an employee
-
-1. Tagging an employee with valid tags
-
-   1. Prerequisites: List all employees using the `list` command. Multiple employees in the list.
-
-   2. Test case: `tag 1 t/HR`<br>
-      Expected: First employees is tagged with "HR". Success message shown in the status message.
-
-   3. Test case: `tag 1 t/HR t/Manager`<br>
-      Expected: First employee is tagged with both "HR" and "Manager". Success message shown.
-
-   4. Test case: `tag 2 t/` (empty tag)<br>
-      Expected: No tag is added. Error details shown: "Tags should only consist of alphanumeric characters, hyphens and spaces, and be between 1 and 30 characters long. The tag should not start or end with a space or hyphen, and it should not contain consecutive spaces or hyphens."
-
-
-
-   5. Test case: `tag 2 t/HR_Department` (contains underscore)<br>
-      Expected: No tag is added. Error details shown due to non-alphanumeric character.
-
-   6. Test case: `tag 2 t/[a string of 31 characters]`<br>
-      Expected: No tag is added. Error details shown due to exceeding 30-character limit.
-
-   7. Test case: `tag 2 t/HR` (when employee already has "HR" tag)<br>
-      Expected: No duplicate tag is added. Error details shown indicating duplicate tag.
-
-   8. Other incorrect tag commands to try: `tag`, `tag x t/HR` (where x is larger than list size), `tag 1` (no tag specified)<br>
-      Expected: Similar error messages shown.
+   5. Test case: `search KEYWORD` (where original list has 3 entries, KEYWORD returns 1 match) followed by `delete 3`<br>
+      Expected: Error message shown for invalid index since the index applies to the filtered list, not full list.
+      
 
 ### Searching for employees
 
@@ -896,22 +926,25 @@ testers are expected to do more *exploratory* testing.
        Expected: The employee is not edited. An error message is shown, indicating invalid field value.
 
     6. Test case: `edit 1 t/friend t/husband` (Multiple tags)<br>
-       Expected: After user enters "y" to a y/n confirmation prompt, The employee is edited. The success message is shown, along with the updated details.
+       Expected: After user enters "y" to a y/n confirmation prompt, The employee is edited. The success message is shown, along with the updated details. All previous tags are deleted, and the employee now only has 'friend' and 'husband' tags.
 
-    7. Test case: `edit 1 n/Amy Cho n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Marketing t/friend` (Duplicate fields)<br>
-       Expected: The employee is not edited. Error messages for duplicated prefix shown.
+    7. Test case: `edit 1 t/` (Delete tags)<br>
+       Expected: After user enters "y" to a y/n confirmation prompt, The employee is edited. The success message is shown, along with the updated details. All previous tags are deleted, and the employee has no tags.
 
-    8. Test case: `edit 0 n/Amy Cho` (Invalid index) <br>
+    8. Test case: `edit 1 n/Amy Cho n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Marketing t/friend` (Duplicate fields)<br>
+       Expected: The employee is not edited. Error messages for duplicated prefix shown, and the prefix that is duplicated is shown.
+
+    9. Other test cases to try: Test case 8 but with other duplicate fields, e.g. duplicate phone fields or email fields.
+       Expected: The employee is not edited. Error messages for duplicated prefix shown, and the prefix that is duplicated is shown.
+
+    10. Test case: `edit 0 n/Amy Cho` (Invalid index) <br>
        Expected: The employee is not edited. An error message is shown, indicating invalid command format.
 
-    9. Test case: `edit n/James& p/11111111 e/bob@meme.com` (Invalid name)<br>
+    11. Test case: `edit n/James& p/11111111 e/bob@meme.com` (Invalid name)<br>
        Expected: The employee is not edited. The correct format for a valid name is shown.
 
-    10. Other incorrect commands with invalid data: `edit 1 <other details> e/a` (Invalid email) or similar<br>
-        Expected: The employee is not edited. An error message is shown, indicating invalid field value.
-
-    11. Other incorrect delete commands to try: `add`, `add johndoe p/3333` (no prefix), and other commands which deviate from the command format<br>
-        Expected: Similar to previous.
+    12. Other test cases to try:  Test case 11 but with inputs that do not adhere to other parameters' respective rules. E.g.: `edit 1 p/12!`
+       Expected: The employee is not edited. The correct format for the offending parameter is shown.
 
 ### Importing employee list
 
