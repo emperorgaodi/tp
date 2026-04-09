@@ -2,6 +2,7 @@ package seedu.address.commons.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import java.io.IOException;
@@ -29,9 +30,9 @@ public class CsvImportUtilTest {
         );
         List<Person> persons = parser.parse(csv);
         assertEquals(1, persons.size());
-        assertEquals("alice tan", persons.get(0).getName().fullName);
-        assertEquals("91234567", persons.get(0).getPhone().value);
-        assertEquals("alice@example.com", persons.get(0).getEmail().value);
+        assertEquals("alice tan", persons.get(0).getName().getFullName());
+        assertEquals("91234567", persons.get(0).getPhone().getValue());
+        assertEquals("alice@example.com", persons.get(0).getEmail().getValue());
     }
 
     @Test
@@ -42,9 +43,9 @@ public class CsvImportUtilTest {
         );
         List<Person> persons = parser.parse(csv);
         assertEquals(1, persons.size());
-        assertEquals("alice tan", persons.get(0).getName().fullName);
-        assertEquals("91234567", persons.get(0).getPhone().value);
-        assertEquals("alice@example.com", persons.get(0).getEmail().value);
+        assertEquals("alice tan", persons.get(0).getName().getFullName());
+        assertEquals("91234567", persons.get(0).getPhone().getValue());
+        assertEquals("alice@example.com", persons.get(0).getEmail().getValue());
     }
 
     @Test
@@ -122,11 +123,34 @@ public class CsvImportUtilTest {
     }
 
     @Test
+    void parse_duplicateNames_throwsCsvParseException() throws Exception {
+        Path csv = writeCsv(
+            "name,phone,email,role,department",
+            "Alice Tan,91234567,alice@example.com,Software Engineer,Backend",
+            "Alice Tan,98765432,bob@example.com,UI Designer,Design",
+            "Carol Ng,81234567,carol@example.com,Head of Marketing,Marketing"
+        );
+        assertThrows(CsvParseException.class, () -> parser.parse(csv));
+    }
+
+    @Test
     void parse_missingFields_throwsCsvParseException() throws Exception {
         Path csv = writeCsv(
             "name,role,department,email",
             "Alice Tan,Software Engineer,Backend,alice@example.com"
         );
+        assertThrows(CsvParseException.class, () -> parser.parse(csv));
+    }
+
+    @Test
+    void parse_overLimit_throwsCsvParseException() throws Exception {
+        // Write max+1 rows to exceed limit
+        StringBuilder content = new StringBuilder("name,phone,email,role,department\n");
+        for (int i = 1; i <= MAX_SIZE + 1; i++) {
+            content.append(String.format("Person %d,91234%d,person%d@example.com,Role%d,Dept%d\n",
+                i, 500 + i, i, i, i));
+        }
+        Path csv = writeCsv(content.toString());
         assertThrows(CsvParseException.class, () -> parser.parse(csv));
     }
 

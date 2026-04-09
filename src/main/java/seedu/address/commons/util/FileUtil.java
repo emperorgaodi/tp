@@ -13,7 +13,13 @@ public class FileUtil {
 
     private static final String CHARSET = "UTF-8";
 
-    public static boolean isFileExists(Path file) {
+    /**
+     * Returns whether the specified regular file exists.
+     *
+     * @param file Path to the file to check.
+     * @return True if the file exists and is a regular file.
+     */
+    public static boolean doesFileExist(Path file) {
         return Files.exists(file) && Files.isRegularFile(file);
     }
 
@@ -36,7 +42,7 @@ public class FileUtil {
      * @throws IOException if the file or directory cannot be created.
      */
     public static void createIfMissing(Path file) throws IOException {
-        if (!isFileExists(file)) {
+        if (!doesFileExist(file)) {
             createFile(file);
         }
     }

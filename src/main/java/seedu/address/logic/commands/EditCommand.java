@@ -7,7 +7,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,7 +30,7 @@ import seedu.address.model.person.Role;
 import seedu.address.model.tag.Tag;
 
 /**
- * Edits the details of an existing person in the address book.
+ * Edits the details of an existing person in the HRmanager.
  */
 public class EditCommand extends Command implements ConfirmableCommand {
 
@@ -39,7 +38,7 @@ public class EditCommand extends Command implements ConfirmableCommand {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the person identified "
             + "by the index number used in the displayed person list. "
-            + "Existing values will be overwritten by the input values."
+            + "Existing values will be overwritten by the input values. "
             + "Accepts 0-1 input values for each field, with at least 1 input value overall.\n"
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_NAME + "NAME] "
@@ -77,6 +76,11 @@ public class EditCommand extends Command implements ConfirmableCommand {
         assert this.editPersonDescriptor != null : "EditPersonDescriptor defensive copy failed";
     }
 
+    /**
+     * Returns the confirmation prompt for this edit command.
+     *
+     * @return Confirmation prompt shown before execution.
+     */
     @Override
     public String getConfirmationPrompt() {
         assert index != null : "Index cannot be null when generating confirmation prompt";
@@ -88,23 +92,49 @@ public class EditCommand extends Command implements ConfirmableCommand {
         return ConfirmationPromptFormatter.format(actionSummary, IMPACT_SUMMARY);
     }
 
+    /**
+     * Returns a short description of the command action.
+     *
+     * @return Action description used in cancellation feedback.
+     */
     @Override
     public String getActionDescription() {
         return ACTION_DESCRIPTION;
     }
 
+    /**
+     * Validates the target index and duplicate constraints before showing confirmation.
+     *
+     * @param model Current model state.
+     * @throws CommandException If the target person is invalid or results in a duplicate.
+     */
+    @Override
+    public void validateBeforeConfirm(Model model) throws CommandException {
+        requireNonNull(model);
+        List<Person> lastShownList = model.getFilteredPersonList();
+        requireNonNull(lastShownList);
+
+        Person personToEdit = getPersonToEdit(lastShownList);
+        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+        requireNonNull(editedPerson);
+
+        ensureNoDuplicatePerson(model, personToEdit, editedPerson);
+    }
+
+    /**
+     * Executes the edit by replacing the target person with edited details.
+     *
+     * @param model Model on which the command operates.
+     * @return Command result indicating edit success.
+     * @throws CommandException If the target index is invalid or the edit creates a duplicate.
+     */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         List<Person> lastShownList = model.getFilteredPersonList();
         requireNonNull(lastShownList);
 
-        if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
-        }
-
-        Person personToEdit = lastShownList.get(index.getZeroBased());
-        assert personToEdit != null : "Person to edit cannot be null";
+        Person personToEdit = getPersonToEdit(lastShownList);
 
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
         requireNonNull(editedPerson);
@@ -115,17 +145,29 @@ public class EditCommand extends Command implements ConfirmableCommand {
         requireNonNull(editedPerson.getRole());
         requireNonNull(editedPerson.getDepartment());
 
-        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
-        }
+        ensureNoDuplicatePerson(model, personToEdit, editedPerson);
 
         model.setPerson(personToEdit, editedPerson);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-
-        assert model.getFilteredPersonList().contains(editedPerson) : "Edited person should be in the filtered list";
 
         model.commitAddressBook();
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+    }
+
+    private Person getPersonToEdit(List<Person> lastShownList) throws CommandException {
+        if (index.getZeroBased() >= lastShownList.size()) {
+            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        }
+
+        Person personToEdit = lastShownList.get(index.getZeroBased());
+        requireNonNull(personToEdit);
+        return personToEdit;
+    }
+
+    private void ensureNoDuplicatePerson(Model model, Person personToEdit, Person editedPerson)
+            throws CommandException {
+        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
+            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        }
     }
 
     /**
@@ -155,6 +197,12 @@ public class EditCommand extends Command implements ConfirmableCommand {
         return new Person(updatedName, updatedPhone, updatedEmail, updatedRole, updatedDepartment, updatedTags);
     }
 
+    /**
+     * Returns whether this command is equal to another object.
+     *
+     * @param other Object to compare against.
+     * @return {@code true} if both commands target the same index with equal edit descriptor.
+     */
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -171,6 +219,11 @@ public class EditCommand extends Command implements ConfirmableCommand {
                 && editPersonDescriptor.equals(otherEditCommand.editPersonDescriptor);
     }
 
+    /**
+     * Returns a string representation of this command.
+     *
+     * @return String form containing the target index and edit descriptor.
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -191,6 +244,9 @@ public class EditCommand extends Command implements ConfirmableCommand {
         private Department department;
         private Set<Tag> tags;
 
+        /**
+         * Creates an empty edit descriptor.
+         */
         public EditPersonDescriptor() {}
 
         /**
@@ -215,42 +271,92 @@ public class EditCommand extends Command implements ConfirmableCommand {
             return CollectionUtil.isAnyNonNull(name, phone, email, role, department, tags);
         }
 
+        /**
+         * Sets the name to be used for editing.
+         *
+         * @param name Name value.
+         */
         public void setName(Name name) {
             this.name = name;
         }
 
+        /**
+         * Returns the name edit value.
+         *
+         * @return Optional containing name if present.
+         */
         public Optional<Name> getName() {
             return Optional.ofNullable(name);
         }
 
+        /**
+         * Sets the phone to be used for editing.
+         *
+         * @param phone Phone value.
+         */
         public void setPhone(Phone phone) {
             this.phone = phone;
         }
 
+        /**
+         * Returns the phone edit value.
+         *
+         * @return Optional containing phone if present.
+         */
         public Optional<Phone> getPhone() {
             return Optional.ofNullable(phone);
         }
 
+        /**
+         * Sets the email to be used for editing.
+         *
+         * @param email Email value.
+         */
         public void setEmail(Email email) {
             this.email = email;
         }
 
+        /**
+         * Returns the email edit value.
+         *
+         * @return Optional containing email if present.
+         */
         public Optional<Email> getEmail() {
             return Optional.ofNullable(email);
         }
 
+        /**
+         * Sets the role to be used for editing.
+         *
+         * @param role Role value.
+         */
         public void setRole(Role role) {
             this.role = role;
         }
 
+        /**
+         * Returns the role edit value.
+         *
+         * @return Optional containing role if present.
+         */
         public Optional<Role> getRole() {
             return Optional.ofNullable(role);
         }
 
+        /**
+         * Sets the department to be used for editing.
+         *
+         * @param department Department value.
+         */
         public void setDepartment(Department department) {
             this.department = department;
         }
 
+        /**
+         * Returns the department edit value.
+         *
+         * @return Optional containing department if present.
+         */
         public Optional<Department> getDepartment() {
             return Optional.ofNullable(department);
         }
@@ -277,6 +383,12 @@ public class EditCommand extends Command implements ConfirmableCommand {
             return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
         }
 
+        /**
+         * Returns whether this descriptor is equal to another object.
+         *
+         * @param other Object to compare against.
+         * @return {@code true} if all descriptor fields are equal.
+         */
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -297,6 +409,11 @@ public class EditCommand extends Command implements ConfirmableCommand {
                     && Objects.equals(tags, otherEditPersonDescriptor.tags);
         }
 
+        /**
+         * Returns a string representation of this descriptor.
+         *
+         * @return String form containing configured edit fields.
+         */
         @Override
         public String toString() {
             return new ToStringBuilder(this)

@@ -16,7 +16,7 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 
 /**
- * Deletes a person identified using it's displayed index from the address book.
+ * Deletes a person identified using it's displayed index from the HRmanager.
  */
 public class DeleteCommand extends Command implements ConfirmableCommand {
 
@@ -85,7 +85,7 @@ public class DeleteCommand extends Command implements ConfirmableCommand {
         List<Person> lastShownList = model.getFilteredPersonList();
         List<String> targetLabels = getUniqueIndexes().stream()
                 .sorted((a, b) -> Integer.compare(a.getZeroBased(), b.getZeroBased()))
-                .map(index -> lastShownList.get(index.getZeroBased()).getName().fullName)
+                .map(index -> lastShownList.get(index.getZeroBased()).getName().getFullName())
                 .collect(Collectors.toList());
 
         String actionSummary = String.format(ACTION_SUMMARY_FORMAT, targetLabels.size());
@@ -156,7 +156,7 @@ public class DeleteCommand extends Command implements ConfirmableCommand {
         for (Index index : uniqueIndexes.stream()
                 .sorted((a, b) -> Integer.compare(a.getZeroBased(), b.getZeroBased()))
                 .toList()) {
-            deletedNamesInDisplayOrder.add(lastShownList.get(index.getZeroBased()).getName().fullName);
+            deletedNamesInDisplayOrder.add(lastShownList.get(index.getZeroBased()).getName().getFullName());
         }
         return deletedNamesInDisplayOrder;
     }

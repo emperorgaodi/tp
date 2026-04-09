@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 
@@ -51,6 +52,15 @@ public class AddCommandTest {
         ModelStub modelStub = new ModelStubWithPerson(validPerson);
 
         assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
+    public void execute_overLimit_throwsCommandException() {
+        Person validPerson = new PersonBuilder().build();
+        AddCommand addCommand = new AddCommand(validPerson);
+        ModelStubWithLimitReached modelStub = new ModelStubWithLimitReached();
+
+        assertThrows(CommandException.class, AddCommand.MESSAGE_OVER_LIMIT, () -> addCommand.execute(modelStub));
     }
 
     @Test
@@ -130,7 +140,7 @@ public class AddCommandTest {
 
         @Override
         public ReadOnlyAddressBook getAddressBook() {
-            throw new AssertionError("This method should not be called.");
+            return new AddressBook();
         }
 
         @Override
@@ -164,12 +174,12 @@ public class AddCommandTest {
         }
 
         @Override
-        public boolean undoAddressBook() {
+        public boolean isUndoAddressBookSuccessful() {
             throw new AssertionError("This method should not be called.");
         }
 
         @Override
-        public boolean redoAddressBook() {
+        public boolean isRedoAddressBookSuccessful() {
             throw new AssertionError("This method should not be called.");
         }
 
@@ -228,6 +238,35 @@ public class AddCommandTest {
         @Override
         public ReadOnlyAddressBook getAddressBook() {
             return new AddressBook();
+        }
+    }
+
+    /**
+     * A Model stub that has reached the maximum capacity of 200 persons.
+     */
+    private class ModelStubWithLimitReached extends ModelStubAcceptingPersonAdded {
+        @Override
+        public boolean hasPerson(Person person) {
+            return false; // Person doesn't exist yet
+        }
+
+        @Override
+        public void addPerson(Person person) {
+            requireNonNull(person);
+            if (personsAdded.size() >= MAX_SIZE) {
+                throw new RuntimeException(AddCommand.MESSAGE_OVER_LIMIT);
+            }
+            personsAdded.add(person);
+        }
+
+        @Override
+        public ReadOnlyAddressBook getAddressBook() {
+            AddressBook addressBook = new AddressBook();
+            // Fill the address book with 200 persons to reach the limit
+            for (int i = 0; i < MAX_SIZE; i++) {
+                addressBook.addPerson(new PersonBuilder().withName("Person " + i).build());
+            }
+            return addressBook;
         }
     }
 

@@ -2,6 +2,7 @@ package seedu.address.model.tag;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.model.person.Person.MAX_TAG_COUNT;
 
 /**
  * Represents a Tag in the HRManager.
@@ -16,6 +17,9 @@ public class Tag {
             + "The tag should not start or end with a space or hyphen, "
             + "and it should not contain consecutive spaces or hyphens.";
 
+    public static final String MESSAGE_TAG_COUNT_CONSTRAINTS =
+            "Each employee can have at most " + MAX_TAG_COUNT + " tags.";
+
     /*
      * The first character of the address must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
@@ -27,7 +31,7 @@ public class Tag {
         + "[a-zA-Z0-9])?" // ends with an alphanumeric character
         + "$";
 
-    public final String tagName;
+    private final String tagName;
 
     /**
      * Constructs a {@code Tag}.
@@ -45,6 +49,10 @@ public class Tag {
      */
     public static boolean isValidTagName(String test) {
         return test.matches(VALIDATION_REGEX);
+    }
+
+    public String getTagName() {
+        return tagName;
     }
 
     @Override

@@ -40,15 +40,10 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void parse_nonAlphanumericKeyword_throwsParseException() {
-        assertParseFailure(parser, "Alice-123",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, SearchCommand.MESSAGE_USAGE));
-
-        assertParseFailure(parser, "ab-",
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, SearchCommand.MESSAGE_USAGE));
-
-        assertParseFailure(parser, "ab_cd",
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, SearchCommand.MESSAGE_USAGE));
+    public void parse_specialCharacterKeywords_returnsSearchCommand() {
+        java.util.List<String> keywords = java.util.List.of("Alice-123", "ab_cd", "user@example.com", "@");
+        SearchCommand expectedSearchCommand = new SearchCommand(new PersonMatchesKeywordPredicate(keywords));
+        assertParseSuccess(parser, String.join(" ", keywords), expectedSearchCommand);
     }
 
     @Test
@@ -72,6 +67,13 @@ public class SearchCommandParserTest {
         SearchCommand expectedSearchCommand =
             new SearchCommand(new PersonMatchesKeywordPredicate(java.util.List.of("Alice", "Bob", "12c")));
         assertParseSuccess(parser, "Alice Bob 12c", expectedSearchCommand);
+    }
+
+    @Test
+    public void parse_maxKeywordCount_returnsSearchCommand() {
+        java.util.List<String> keywords = java.util.List.of("a", "b", "c", "d", "e");
+        SearchCommand expectedSearchCommand = new SearchCommand(new PersonMatchesKeywordPredicate(keywords));
+        assertParseSuccess(parser, String.join(" ", keywords), expectedSearchCommand);
     }
 
     @Test

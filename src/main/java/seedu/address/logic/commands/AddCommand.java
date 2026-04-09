@@ -7,6 +7,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.model.AddressBook.MAX_SIZE;
 
 import java.util.logging.Logger;
 
@@ -18,7 +19,7 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 
 /**
- * Adds a person to the address book.
+ * Adds a person to the HRmanager.
  */
 public class AddCommand extends Command {
 
@@ -44,6 +45,9 @@ public class AddCommand extends Command {
     public static final String MESSAGE_SUCCESS = "New employee added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This employee already exists in HRmanager";
 
+    public static final String MESSAGE_OVER_LIMIT = String.format(
+        "You are already at max capacity!\nHRmanager supports a maximum of %d employees.", MAX_SIZE);
+
     private static final Logger logger = LogsCenter.getLogger(AddCommand.class);
 
     private final Person toAdd;
@@ -59,21 +63,38 @@ public class AddCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        assert toAdd != null : "Person to add cannot be null";
-
         logger.info("Attempting to add person: " + toAdd.getName());
 
-        if (model.hasPerson(toAdd)) {
-            logger.warning("Duplicate person attempted: " + toAdd.getName());
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        if (model.getAddressBook().getPersonList().size() >= MAX_SIZE) {
+            handleModelOverSizeLimit();
         }
 
-        assert !model.hasPerson(toAdd) : "Person should not exist before adding";
+        if (hasDuplicatePerson(model)) {
+            handleDuplicatePersonInModel();
+        }
+
+        addPersonToModel(model);
+
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
+    }
+
+    private boolean hasDuplicatePerson(Model model) {
+        return model.hasPerson(toAdd);
+    }
+
+    private void handleDuplicatePersonInModel() throws CommandException {
+        logger.warning("Duplicate person attempted: " + toAdd.getName());
+        throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+    }
+
+    private void handleModelOverSizeLimit() throws CommandException {
+        throw new CommandException(MESSAGE_OVER_LIMIT);
+    }
+
+    private void addPersonToModel(Model model) {
         model.addPerson(toAdd);
-        assert model.hasPerson(toAdd) : "Person should exist after adding";
         logger.fine("Successfully added person: " + toAdd.getName());
         model.commitAddressBook();
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 
     @Override

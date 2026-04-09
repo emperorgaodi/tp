@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -11,10 +12,12 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Person in the address book.
+ * Represents a Person in the HRmanager.
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
+
+    public static final int MAX_TAG_COUNT = 20;
 
     // Identity fields
     private final Name name;
@@ -31,6 +34,7 @@ public class Person {
      */
     public Person(Name name, Phone phone, Email email, Role role, Department department, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, role, department, tags);
+        checkArgument(tags.size() <= MAX_TAG_COUNT, Tag.MESSAGE_TAG_COUNT_CONSTRAINTS);
         this.name = name;
         this.phone = phone;
         this.email = email;

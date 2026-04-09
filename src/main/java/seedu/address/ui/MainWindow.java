@@ -24,6 +24,8 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final double MIN_WINDOW_WIDTH = 1020;
+    private static final double MIN_WINDOW_HEIGHT = 600;
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -51,9 +53,6 @@ public class MainWindow extends UiPart<Stage> {
     @FXML
     private StackPane statsPanelPlaceholder;
 
-    @FXML
-    private StackPane statusbarPlaceholder;
-
     /**
      * Creates a {@code MainWindow} with the given {@code Stage} and {@code Logic}.
      */
@@ -66,6 +65,7 @@ public class MainWindow extends UiPart<Stage> {
 
         // Configure the UI
         setWindowDefaultSize(logic.getGuiSettings());
+        enforceMinimumWindowSize();
 
         setAccelerators();
 
@@ -120,14 +120,16 @@ public class MainWindow extends UiPart<Stage> {
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
-        StatusBarFooter statusBarFooter = new StatusBarFooter(logic.getAddressBookFilePath());
-        statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
-
         CommandBox commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
 
         statsPanel = new StatsPanel(logic);
         statsPanelPlaceholder.getChildren().add(statsPanel.getRoot());
+    }
+
+    private void enforceMinimumWindowSize() {
+        primaryStage.setMinWidth(MIN_WINDOW_WIDTH);
+        primaryStage.setMinHeight(MIN_WINDOW_HEIGHT);
     }
 
     /**
@@ -186,11 +188,11 @@ public class MainWindow extends UiPart<Stage> {
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
             commandResult.getStatisticsMode().ifPresent(mode -> statsPanel.setStatisticsMode(mode));
 
-            if (commandResult.isShowHelp()) {
+            if (commandResult.shouldShowHelp()) {
                 handleHelp();
             }
 
-            if (commandResult.isExit()) {
+            if (commandResult.shouldExit()) {
                 handleExit();
             }
 
@@ -202,3 +204,4 @@ public class MainWindow extends UiPart<Stage> {
         }
     }
 }
+

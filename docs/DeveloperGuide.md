@@ -280,7 +280,7 @@ The flow is as follows:
 
 1. The user enters `search KEYWORD [MORE_KEYWORDS]...`.
 2. `AddressBookParser` routes the input to `SearchCommandParser`.
-3. `SearchCommandParser` trims the arguments, rejects blank input, rejects searches with more than 5 keywords, rejects any keyword longer than 20 characters, and rejects non-alphanumeric keywords.
+3. `SearchCommandParser` trims the arguments, rejects blank input, splits input by whitespace into keywords, rejects searches with more than 5 keywords, and rejects any keyword longer than 50 characters.
 4. If parsing succeeds, `SearchCommand` is created with a `PersonMatchesKeywordPredicate`.
 5. `SearchCommand#execute` updates the model's filtered employee list and returns feedback in the form `X employees listed!`.
 
@@ -298,9 +298,10 @@ Matching behavior:
 * search is case-insensitive
 * all employee fields are searched (name, phone, email, role, department, tags)
 * each keyword is treated as a partial substring match rather than a full-word match
-* multiple keywords are combined using `AND` semantics
+* each keyword is a non-whitespace token (symbols such as `@`, `_`, `-`, and `.` are allowed)
+* multiple keywords are combined using `OR` semantics
 
-This means a command such as `search ali hr` returns employees whose fields contain both `ali` and `hr`, regardless of case (for instance, an employee named "Alice" in the "HR" department).
+This means a command such as `search ali hr` returns employees whose fields contain either `ali` or `hr`, regardless of case (for instance, an employee named "Alice", or someone in the "HR" department).
 
 ### Statistics Panel
 
@@ -416,7 +417,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *` | user                               | delete an employee                     | clear up data when it is no longer needed                  |
 | `* * *` | user                               | view all employees                     | gain a brief overview of everyone in the company           |
 | `* * *` | user                               | store phone numbers and email addresses| contact employees easily                                   |
-| `* * *` | busy user                          | search for employees by name           | quickly find a specific staff member                       |
+| `* * *` | busy user                          | search for employees by keywords       | quickly find relevant staff members                        |
 | `* * *` | busy user                          | add contacts with only name and phone  | track someone now and update details later                 |
 | `* * `  | organised user                     | modify employee details                | keep info up to date                                       |
 | `* * `  | organised user                     | sort employees by variables            | find the most relevant employees for my needs              |
@@ -667,38 +668,15 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     Use case resumes at step 7.
 
 
-### Use case 8 (UC8): Exporting current employee data
-
-**MSS**
-
-1. User requests to export current employee data into destination of choice.
-2. System resolves path and checks validity.
-3. System converts app data into csv format.
-4. System saves csv file into target destination.
-
-    Use case ends.
-
-**Extensions**
-
-* 2a. User input filepath is invalid.
-  * 2a1. System displays an error message.
-
-    Use case resumes at Step 1.
-
-* 2b. File already exists at target destination.
-  * 2b1. System displays an error message.
-
-    Use case resumes at step 1.
-
-// RESOLVE MERGE CONFLICT
 ### Use case 8 (UC8): Importing employee data
 
 **MSS**
 
-1. User requests to export current employee data into destination of choice.
+1. User requests to import employee data from destination of choice.
 2. System resolves path and checks validity.
-3. System converts app data into csv format.
-4. System saves csv file into target destination.
+3. System converts csv data into list of employees.
+4. System saves list of employees, overwriting any pre-existing employee data.
+5. System displays a confirmation message indicating the number of employees imported and the file used.
 
     Use case ends.
 
@@ -709,10 +687,34 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
     Use case resumes at Step 1.
 
-* 2b. File already exists at target destination.
-  * 2b1. System displays an error message.
+* 3a. File data is invalid (e.g. missing required header rows, duplicate persons).
+  * 3a1. System displays an error message.
 
     Use case resumes at step 1.
+
+### Use case 9 (UC9): Exporting current employee data
+
+**MSS**
+
+1. User requests to export current employee data into destination of choice.
+2. System resolves path and checks validity.
+3. System converts app data into csv format.
+4. System saves csv file into target destination.
+5. System displays a confirmation message indicating the file destination.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. User input filepath is invalid.
+    * 2a1. System displays an error message.
+
+      Use case resumes at Step 1.
+
+* 2b. File already exists at target destination.
+    * 2b1. System displays an error message.
+
+      Use case resumes at step 1.
 
 
 ### Non-Functional Requirements
@@ -865,7 +867,7 @@ testers are expected to do more *exploratory* testing.
 
 ### Searching for employees
 
-1. Searching for employees using a keyword
+1. Searching for employees using one or more keywords
 
    1. Prerequisites: List all employees using the list command. Multiple employees in the list with various names, phones, emails, roles, departments, and tags.
 
@@ -881,26 +883,29 @@ testers are expected to do more *exploratory* testing.
    5. Test case: `search HR`<br>
       Expected: All employees whose fields contain "HR" are listed. Status message shows the number of employees listed.
 
-   6. Test case: `search` (no keyword)<br>
-      Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
+   6. Test case: `search ali hr`<br>
+      Expected: Employees whose fields contain either "ali" or "hr" are listed. Status message shows the number of employees listed.
 
-   7. Test case: `search ` (blank keyword with spaces)<br>
-      Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
+   7. Test case: `search @`<br>
+      Expected: Search is performed successfully. Employees whose fields contain "@" are listed. Status message shows the number of employees listed.
 
    8. Test case: `search John_123` (contains underscore)<br>
-      Expected: No search is performed. Error details shown due to non-alphanumeric characters in keyword.
+      Expected: Search is performed successfully because underscore is allowed. Matching employees are listed, or an empty list is shown if there are no matches.
 
-   9. Test case: `search [a string of 21 characters]`<br>
-      Expected: No search is performed. Error details shown due to exceeding 20-character limit.
+   9. Test case: `search` (no keyword)<br>
+      Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
 
-   10. Test case: `search keyword1 keyword2 keyword3 keyword4 keyword5 keyword6` (more than 5 keywords)<br>
+   10. Test case: `search ` (blank keyword with spaces)<br>
+       Expected: No search is performed. Error details shown in the status message indicating invalid command format and displays the correct usage format.
+
+   11. Test case: `search [a string of 51 characters]`<br>
+       Expected: No search is performed. Error details shown due to exceeding 50-character limit.
+
+   12. Test case: `search keyword1 keyword2 keyword3 keyword4 keyword5 keyword6` (more than 5 keywords)<br>
        Expected: No search is performed. Error details shown indicating invalid command format because maximum keywords is exceeded.
 
-   11. Test case: `search keywordThatDoesNotMatchAnyEmployee`<br>
+   13. Test case: `search keywordThatDoesNotMatchAnyEmployee`<br>
        Expected: Empty list shown. Status message indicates "0 employees listed!".
-
-   12. Other incorrect search commands to try: `search @lphabet`, `search 123!@#`<br>
-       Expected: Similar error messages shown due to non-alphanumeric characters.
 
 ### Editing an employee
 
@@ -941,20 +946,45 @@ testers are expected to do more *exploratory* testing.
     12. Other test cases to try:  Test case 11 but with inputs that do not adhere to other parameters' respective rules. E.g.: `edit 1 p/12!`
        Expected: The employee is not edited. The correct format for the offending parameter is shown.
 
+### Importing employee list
+
+1. Importing employee data
+   
+   1. Test case: `import C:\Users\username\Downloads\test.csv` (Valid entry, assuming file format and data are valid)
+       Expected: Employee list is imported by parsing test.csv in user's Downloads folder, overwriting existing employee data.
+
+   2. Test case: `import test.csv` (Valid entry, assuming file format and data are valid)
+       Expected: Employee list is imported by parsing test.csv in HRmanager's home folder, overwriting existing employee data.
+   
+   3. Test case: `import C:\Users\username\invalid\path\nonexistent\test.csv` (Invalid entry)
+       Expected: Employee list is not imported. An error message is shown, indicating invalid path.
+   
+   4. Test case:`import C:\Users\username\Downloads\wrongformat.csv` (Invalid entry, assuming file exists but is in the wrong format, e.g. duplicate persons, missing required headers, invalid data...)
+       Expected: Employee list is not imported. An error message is shown, indicating failure in parsing and the exact format error that caused it.
+   
+   5. Test case: `import C:\Users\username\Downloads\test.txt` (Invalid entry)
+      Expected: Employee list is not imported. An error message is shown, indicating invalid file extension.
+
+
 ### Exporting employee list
 
-1. Editing an employee's details
+1. Exporting current employee data
 
-    1. Prerequisites: Existing list is non-empty, target destination is non-empty
-
-    2. Test case: `export C:\Users\username\Downloads\test.csv` (Valid entry, assuming tester doesn't have existing test.csv in Downloads folder)
+   1. Test case: `export C:\Users\username\Downloads\test.csv` (Valid entry, assuming tester doesn't have existing test.csv in Downloads folder)
         Expected: A file test.csv is created in the User's Downloads folder, containing the current employee data in csv format.
 
-    3. Test case: `export asasearoj` (Invalid path)
-        Expected: No csv file is created. An error message is shown, indicating invalid file path.
+   2. Test case: `export employees.csv` (Valid path)
+        Expected: A file employees.csv is created in HRmanager's home folder, containing the current employee data in csv format.
 
-    4. Test case: `export C:\Users\username\Downloads\existingfile.csv` (Invalid entry, existing file in destination)
-       Expected: No csv file is created. An error message is shown, indicating existing file.
+   3. Test case: `export C:\Users\username\Downloads\existingfile.csv` (Invalid entry, existing file in destination)
+        Expected: No csv file is created. An error message is shown, indicating existing file at target destination.
+
+   4. Test case: `export employees.txt` (Invalid path, only csv exports are allowed)
+        Expected: No csv file is created. An error message is shown, indicating the required .csv extension.
+   
+   5. Test case: `export C:\Users\username\nonexisting\invalid\path\employees.csv` (Invalid entry, path is invalid)
+        Expected: No csv file is created. An error message is shown, indicating invalid path.
+
 
 
 ### Saving data

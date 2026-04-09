@@ -18,7 +18,7 @@ public class PersonCard extends UiPart<Region> {
 
     private static final String FXML = "PersonListCard.fxml";
 
-    private static final String LABEL_PHONE = "Number: ";
+    private static final String LABEL_PHONE = "Phone: ";
     private static final String LABEL_ROLE = "Role: ";
     private static final String LABEL_DEPARTMENT = "Department: ";
     private static final String LABEL_EMAIL = "Email: ";
@@ -28,10 +28,10 @@ public class PersonCard extends UiPart<Region> {
      * As a consequence, UI elements' variable names cannot be set to such keywords
      * or an exception will be thrown by JavaFX during runtime.
      *
-     * @see <a href="https://github.com/se-edu/addressbook-level4/issues/336">The issue on AddressBook level 4</a>
+     * @see <a href="https://github.com/se-edu/addressbook-level4/issues/336">The issue on upstream level 4</a>
      */
 
-    public final Person person;
+    private final Person person;
 
     @FXML
     private HBox cardPane;
@@ -68,13 +68,22 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
 
         id.setText(displayedIndex + ". ");
-        name.setText(person.getName().fullName);
-        phone.setText(LABEL_PHONE + person.getPhone().value);
-        role.setText(LABEL_ROLE + person.getRole().value);
-        department.setText(LABEL_DEPARTMENT + person.getDepartment().value);
-        email.setText(LABEL_EMAIL + person.getEmail().value);
+        name.setText(person.getName().getFullName());
+        phone.setText(LABEL_PHONE + person.getPhone().getValue());
+        role.setText(LABEL_ROLE + person.getRole().getValue());
+        department.setText(LABEL_DEPARTMENT + person.getDepartment().getValue());
+        email.setText(LABEL_EMAIL + person.getEmail().getValue());
         person.getTags().stream()
-                .sorted(Comparator.comparing(tag -> tag.tagName))
-                .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
+                .sorted(Comparator.comparing(tag -> tag.getTagName()))
+                .forEach(tag -> tags.getChildren().add(new Label(tag.getTagName())));
+    }
+
+    /**
+     * Returns the person represented by this card.
+     *
+     * @return Person displayed by this UI component.
+     */
+    public Person getPerson() {
+        return person;
     }
 }

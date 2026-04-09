@@ -58,11 +58,11 @@ class JsonAdaptedPerson {
      * Converts a given {@code Person} into this class for Jackson use.
      */
     public JsonAdaptedPerson(Person source) {
-        name = source.getName().fullName;
-        phone = source.getPhone().value;
-        email = source.getEmail().value;
-        role = source.getRole().value;
-        department = source.getDepartment().value;
+        name = source.getName().getFullName();
+        phone = source.getPhone().getValue();
+        email = source.getEmail().getValue();
+        role = source.getRole().getValue();
+        department = source.getDepartment().getValue();
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -133,6 +133,10 @@ class JsonAdaptedPerson {
         final Department modelDepartment = new Department(department);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
+        if (modelTags.size() > Person.MAX_TAG_COUNT) {
+            logger.warning("Too many tags in JSON data for person: " + name);
+            throw new IllegalValueException(Tag.MESSAGE_TAG_COUNT_CONSTRAINTS);
+        }
         Person person = new Person(modelName, modelPhone, modelEmail, modelRole, modelDepartment, modelTags);
         logger.fine("Successfully converted JsonAdaptedPerson to Person: " + person.getName());
         return person;

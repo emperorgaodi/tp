@@ -27,6 +27,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ConfirmationPromptFormatter;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.ImportCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -54,7 +55,7 @@ public class LogicManagerTest {
     public void setUp() {
         model = new ModelManager();
         JsonAddressBookStorage addressBookStorage =
-                new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+                new JsonAddressBookStorage(temporaryFolder.resolve("HRmanager.json"));
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(temporaryFolder.resolve("userPrefs.json"));
         StorageManager storage = new StorageManager(addressBookStorage, userPrefsStorage);
         logic = new LogicManager(model, storage);
@@ -117,7 +118,7 @@ public class LogicManagerTest {
     @Test
     public void execute_confirmableCommandConfirmed_executesSuccessfully() throws Exception {
         model.addPerson(new PersonBuilder(AMY).withTags().build());
-        String name = model.getFilteredPersonList().get(0).getName().fullName;
+        String name = model.getFilteredPersonList().get(0).getName().getFullName();
 
         String deleteCommand = "delete 1";
         assertCommandSuccess(deleteCommand, getDeleteConfirmationPrompt(name), model);
@@ -130,7 +131,7 @@ public class LogicManagerTest {
     @Test
     public void execute_confirmableCommandCancelled_doesNotExecute() throws Exception {
         model.addPerson(new PersonBuilder(AMY).withTags().build());
-        String name = model.getFilteredPersonList().get(0).getName().fullName;
+        String name = model.getFilteredPersonList().get(0).getName().getFullName();
 
         assertCommandSuccess("delete 1", getDeleteConfirmationPrompt(name), model);
         assertCommandSuccess("n", String.format(MESSAGE_COMMAND_CANCELLED, DeleteCommand.ACTION_DESCRIPTION), model);
@@ -141,13 +142,29 @@ public class LogicManagerTest {
     @Test
     public void execute_confirmableCommandInvalidConfirmationInput_keepsPendingState() throws Exception {
         model.addPerson(new PersonBuilder(AMY).withTags().build());
-        String name = model.getFilteredPersonList().get(0).getName().fullName;
+        String name = model.getFilteredPersonList().get(0).getName().getFullName();
 
         assertCommandSuccess("delete 1", getDeleteConfirmationPrompt(name), model);
         assertCommandSuccess("abc", MESSAGE_INVALID_CONFIRMATION_INPUT, model);
         assertCommandSuccess("n", String.format(MESSAGE_COMMAND_CANCELLED, DeleteCommand.ACTION_DESCRIPTION), model);
 
         assertEquals(1, logic.getFilteredPersonList().size());
+    }
+
+    @Test
+    public void execute_confirmableEditValidationFailure_doesNotSetPendingConfirmation() throws Exception {
+        assertCommandException("edit 1 n/Alice", MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+
+        assertCommandSuccess(ListCommand.COMMAND_WORD, ListCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void execute_confirmableImportValidationFailure_doesNotSetPendingConfirmation() throws Exception {
+        Path missingPath = temporaryFolder.resolve("missing-employees.csv");
+        String importCommand = "import " + missingPath;
+
+        assertCommandException(importCommand, String.format(ImportCommand.MESSAGE_FILE_NOT_FOUND, missingPath));
+        assertCommandSuccess(ListCommand.COMMAND_WORD, ListCommand.MESSAGE_SUCCESS, model);
     }
 
     /**

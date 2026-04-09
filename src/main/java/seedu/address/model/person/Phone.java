@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
- * Represents a Person's phone number in the address book.
+ * Represents a Person's phone number in the HRmanager.
  * Guarantees: immutable; is valid as declared in {@link #isValidPhone(String)}
  */
 public class Phone {
@@ -15,7 +15,7 @@ public class Phone {
         + " with no extensions or spaces, "
         + "and it should be between 3 and 16 digits long inclusive.";
     public static final String VALIDATION_REGEX = "\\d{3,16}";
-    public final String value;
+    private final String value;
 
     /**
      * Constructs a {@code Phone}.
@@ -33,6 +33,10 @@ public class Phone {
      */
     public static boolean isValidPhone(String test) {
         return test.matches(VALIDATION_REGEX);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import seedu.address.commons.util.ToStringBuilder;
 
 /**
- * Tests that a {@code Person}'s fields contain all of the keywords given.
+ * Tests that a {@code Person}'s fields contain at least one of the keywords given.
  */
 public class PersonMatchesKeywordPredicate implements Predicate<Person> {
     private final List<String> keywords;
@@ -24,33 +24,45 @@ public class PersonMatchesKeywordPredicate implements Predicate<Person> {
         this.keywords = List.copyOf(keywords);
     }
 
+    /**
+     * Returns whether the given {@code person} matches at least one non-blank keyword.
+     *
+     * @param person Person to test.
+     * @return {@code true} if any keyword matches a searchable field in the person.
+     */
     @Override
     public boolean test(Person person) {
         requireNonNull(person);
 
-        boolean allKeywordsBlank = keywords.stream().allMatch(String::isBlank);
-        if (allKeywordsBlank) {
+        boolean areAllKeywordsBlank = keywords.stream().allMatch(String::isBlank);
+        if (areAllKeywordsBlank) {
             return false;
         }
 
         return keywords.stream()
                 .filter(keyword -> !keyword.isBlank())
-                .allMatch(keyword -> matchesAnyPersonField(person, keyword));
+            .anyMatch(keyword -> doesMatchAnyPersonField(person, keyword));
     }
 
-    private boolean matchesAnyPersonField(Person person, String keyword) {
-        return containsIgnoreCase(person.getName().fullName, keyword)
-                || containsIgnoreCase(person.getPhone().value, keyword)
-                || containsIgnoreCase(person.getEmail().value, keyword)
-                || containsIgnoreCase(person.getRole().value, keyword)
-                || containsIgnoreCase(person.getDepartment().value, keyword)
-                || person.getTags().stream().anyMatch(tag -> containsIgnoreCase(tag.tagName, keyword));
+    private boolean doesMatchAnyPersonField(Person person, String keyword) {
+        return containsIgnoreCase(person.getName().getFullName(), keyword)
+                || containsIgnoreCase(person.getPhone().getValue(), keyword)
+                || containsIgnoreCase(person.getEmail().getValue(), keyword)
+                || containsIgnoreCase(person.getRole().getValue(), keyword)
+                || containsIgnoreCase(person.getDepartment().getValue(), keyword)
+                || person.getTags().stream().anyMatch(tag -> containsIgnoreCase(tag.getTagName(), keyword));
     }
 
     private boolean containsIgnoreCase(String value, String keyword) {
         return value.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
+    /**
+     * Returns whether this predicate is equal to another object.
+     *
+     * @param other Object to compare against.
+     * @return {@code true} if both predicates contain the same keywords.
+     */
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -66,6 +78,11 @@ public class PersonMatchesKeywordPredicate implements Predicate<Person> {
         return keywords.equals(otherPersonMatchesKeywordPredicate.keywords);
     }
 
+    /**
+     * Returns a string representation of this predicate.
+     *
+     * @return String form containing the configured keywords.
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this).add("keywords", keywords).toString();

@@ -79,8 +79,10 @@ public class StatsPanel extends UiPart<Region> {
 
     /**
      * Creates a StatsPanel.
+     * Initializes the statistics service, sets up a listener for HRmanager changes,
+     * and performs an initial refresh of the statistics display.
      *
-     * @param logic The Logic component to get employee data from
+     * @param logic The Logic component to get employee data from. Must not be null.
      */
     public StatsPanel(Logic logic) {
         super(FXML);
@@ -89,13 +91,10 @@ public class StatsPanel extends UiPart<Region> {
         this.statisticsService = new StatisticsService(logic);
         this.currentMode = StatisticsMode.DEPARTMENT;
 
-        // Listen for changes to the person list.
-        logic.getFilteredPersonList().addListener(new ListChangeListener<Person>() {
-            @Override
-            public void onChanged(Change<? extends Person> change) {
-                logger.fine("Person list changed, refreshing statistics");
-                refresh();
-            }
+        // Listen for changes to the full HRmanager list used by StatisticsService.
+        logic.getAddressBook().getPersonList().addListener((ListChangeListener<Person>) change -> {
+            logger.fine("HRmanager list changed, refreshing statistics");
+            refresh();
         });
 
         refresh();
@@ -104,6 +103,9 @@ public class StatsPanel extends UiPart<Region> {
 
     /**
      * Sets the current dashboard mode and refreshes the panel.
+     * If the new mode is the same as the current mode, no action is taken.
+     *
+     * @param statisticsMode The new statistics mode to display. Must not be null.
      */
     public void setStatisticsMode(StatisticsMode statisticsMode) {
         requireNonNull(statisticsMode);
