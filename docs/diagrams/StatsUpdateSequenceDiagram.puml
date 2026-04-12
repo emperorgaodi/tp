@@ -44,7 +44,7 @@ deactivate Model
 AddCommand --> LogicManager : CommandResult
 deactivate AddCommand
 
-LogicManager --> : CommandResult
+LogicManager --> StatsPanel : CommandResult
 deactivate LogicManager
 
 == StatsPanel Auto-Update ==
