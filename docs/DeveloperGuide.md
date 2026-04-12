@@ -455,6 +455,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 
 **Use case 1 (UC1): Add employee**<br>
+
 **MSS**
 
 1.  User requests to add an employee by adding employee details (`name`, `phone`, `email`, `role`, `department`, optional tags).
@@ -465,6 +466,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **Extensions**
 
 * 1a. System detects an error (e.g. format/syntax/duplicates error) in the entered data.
+    <br></p>
     * 1a1. System displays an error message with the correct format.
     * 1a2. User enters new data.
     <br> *Steps 1a1-1a2 are repeated until the data entered are correct.*
@@ -490,7 +492,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 1a2. User enters new data in the correct format.
     <br> *Steps 1a1-1a2 are repeated until the data entered are correct.*
     <br> *Use case resumes from step 2.*<br><br>
-  
+
 * 2a. One or more indexes are invalid (e.g., index exceeds list size).
     * 2a1. System displays an error message indicating the invalid index.
     * 2a2. User modifies the command until the index is valid.
@@ -499,7 +501,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 4a. User enter 'n' instead.
     * 4a1. System displays a response indicating that the command was aborted.
     <br> *Use case ends.*
-
 
 **Use case 3 (UC3): View employees**<br>
 
@@ -512,6 +513,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **Extensions**
 
 * 2a. There are no employees stored in the system.
+    <br></p>
     * 2a1. System displays an empty employee list.
     <br> *Use case ends*
 

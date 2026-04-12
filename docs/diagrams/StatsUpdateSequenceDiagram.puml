@@ -1,5 +1,6 @@
 @startuml
 !include style.puml
+
 skinparam ArrowFontStyle plain
 skinparam Participant {
     BackgroundColor LightBlue
@@ -23,7 +24,7 @@ box Model #LightPink
     participant "ObservableList" as ObservableList
 end box
 
-box Service #LightYellow
+box Service #LightGray
     participant "StatisticsService" as StatsService
     participant "Statistics" as Statistics
 end box
