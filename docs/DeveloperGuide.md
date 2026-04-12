@@ -443,6 +443,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* `     | lazy user                       | cycle through my previous commands                                               | avoid retyping long commands                               |
 | `* `     | expert user                     | import employee data                                                             | manage pre-existing details without hand-typing everything |
 | `* `     | expert user                     | export employee data                                                             | back up data, support audits and planning                  |
+| `* `     | expert user                     | use aliases for a few frequently used commands                                   | type less and work faster                                  |
 | `* `     | expert user                     | repeat previous command or similar                                               | enter commands quickly                                     |
 | `* `     | expert user                     | bulk delete employees                                                            | efficiently remove employees that have left the company    |
 | `* `     | user responsible for reporting	 | use a centralized dashboard                                                      | maintain visibility over workforce and talent pipeline     |
@@ -453,27 +454,24 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 (For all use cases below, the **System** is the `HRmanager` and the **Actor** is the `user`, unless specified otherwise)
 
 
-### Use case 1 (UC1): Add employee
-
+**Use case 1 (UC1): Add employee**<br>
 **MSS**
 
 1.  User requests to add an employee by adding employee details (`name`, `phone`, `email`, `role`, `department`, optional tags).
 2.  System adds an employee to the records.
-3.  System displays confirmation message.
-
-    Use case ends.
+3.  System displays success message.
+    <br> *Use case ends.*
 
 **Extensions**
 
 * 1a. System detects an error (e.g. format/syntax/duplicates error) in the entered data.
     * 1a1. System displays an error message with the correct format.
     * 1a2. User enters new data.
-    Steps 1a1-1a2 are repeated until the data entered are correct.
+    <br> *Steps 1a1-1a2 are repeated until the data entered are correct.*
+    <br> *Use case resumes at step 2.*
 
-    Use case resumes from step 2.
 
-
-### Use case 2 (UC2): Delete employee
+**Use case 2 (UC2): Delete employee**<br>
 
 **MSS**
 
@@ -483,48 +481,41 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 4. User confirms their intent to execute a 'delete' command, entering 'y'.
 5. System removes the corresponding employee records from the system.
 6. System displays a confirmation message indicating the number of employees deleted.
-
-    Use case ends.
+    <br> *Use case ends.*
 
 **Extensions**
 
 * 1a. System detects an error (e.g. format/syntax error) in the entered data.
     * 1a1. System displays an error message with the correct format.
     * 1a2. User enters new data in the correct format.
-      Steps 1a1-1a2 are repeated until the data entered are correct.
-
-    Use case resumes from step 2.
-
+    <br> *Steps 1a1-1a2 are repeated until the data entered are correct.*
+    <br> *Use case resumes from step 2.*<br><br>
+  
 * 2a. One or more indexes are invalid (e.g., index exceeds list size).
     * 2a1. System displays an error message indicating the invalid index.
     * 2a2. User modifies the command until the index is valid.
-
-    Use case resumes from step 2.
+    <br> *Use case resumes from step 2.*<br><br>
 
 * 4a. User enter 'n' instead.
     * 4a1. System displays a response indicating that the command was aborted.
+    <br> *Use case ends.*
 
-    Use case ends.
 
-
-### Use case 3 (UC3): View employees
+**Use case 3 (UC3): View employees**<br>
 
 **MSS**
 
 1. User requests to view the list of employees.
 2. System retrieves the employee records and displays employee list.
-
-   Use case ends.
+   <br> *Use case ends.*
 
 **Extensions**
 
 * 2a. There are no employees stored in the system.
     * 2a1. System displays an empty employee list.
+    <br> *Use case ends*
 
-    Use case ends
-
-
-### Use case 4 (UC4): Search for an employee
+**Use case 4 (UC4): Search for an employee**<br>
 
 **MSS**
 
@@ -533,82 +524,70 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3.  System processes the search query against the existing employee records.
 4.  System displays a filtered list of all employees that match the search.
     Matching is case-insensitive, supports partial substring matching across all fields, and returns employees whose fields contain any of the supplied keywords.
-
-    Use case ends.
+    <br> *Use case ends.*
 
 **Extensions**
 
 * 1a. The user executes `search` with blank input.
     * 1a1. System displays an invalid command format message together with the proper `search` usage.
-
-    Use case resumes at step 1.
+    <br> *Use case resumes from step 1.*<br><br>
 
 * 1b. The user provides more than 5 keywords, or at least one keyword longer than 50 characters.
     * 1b1. System displays an invalid command format message together with the proper `search` usage.
-
-    Use case resumes at step 1.
+    <br> *Use case resumes from step 1.*<br><br>
 
 * 3a. No employees match the provided search query.
     * 3a1. System displays an empty list and `0 employees listed!`.
-
-    Use case ends.
+    <br> *Use case ends.*<br><br>
 
 * 4a. The user than wants to return to the full non-filtered list of employees.
     * 4a1. User executes `list` to [view employees](#use-case-3-uc3-view-employees) (UC3).
     * 4a2. The system shows the full non-filtered list of employees.
+    <br> *Use case ends.*
 
-    Use case ends.
 
-
-### Use case 5 (UC5): Tag an employee
+**Use case 5 (UC5): Tag an employee**<br>
 
 **MSS**
 
-1. User [searches](#use-case-4-uc4-search-for-an-employee) for employee. (UC4)
+1. User [searches](use-case-4-uc4-search-for-an-employee) for employee. (UC4)
 2. System shows list of employees. (Steps 1 and 2 are necessary to see the changes)
 3. User requests to edit a specific employee in the list, modifying the person's tag(s).
 4. System prompts the user for confirmation that they want to execute a 'edit'.
 5. User confirms their intent to execute a 'edit' command, entering 'y'.
 6. System edits that employee, deleting all previous tags, and adding the given tags.
-7. System displays a confirmation message showing that the employee has been edited, and their new details.
-
-    Use case ends.
+7. System displays a confirmation message showing that the employee has been edited, and their new details. 
+   <br> *Use case ends.*
 
 **Extensions**
 
 * 2a. The list is empty.
-
-    Use case ends. (The person to tag does not exist)
+    <br> *Use case ends. (The person to tag does not exist)*
 
 * 3a. The given index is invalid.
     * 3a1. System shows an error message.
     * 3a2. The user modifies their command until the index is valid.
-
-    Use case resumes at step 4.
+    <br> *Use case resumes from step 4.*<br><br>
 
 * 3b. The tag name provided is already associated with this employee.
     * 3b1. There is no problem. The action proceeds anyway, though there is essentially no change at step 6.
-
-    Use case resumes at step 4.
+    <br> *Use case resumes from step 4.*<br><br>
 
 * 3c. The tag provided is invalid (e.g., exceeds 30 characters, or contains non-alphanumeric characters).
     * 3c1. System shows an error message: "Tags should only consist of alphanumeric characters, hyphens and spaces, and be between 1 and 30 characters long. The tag should not start or end with a space or hyphen, and it should not contain consecutive spaces or hyphens."
     * 3c2. The user modifies their command until the tag(s) is/are valid.
-
-    Use case resumes at step 4.
+    <br> *Use case resumes from step 4.*<br><br>
 
 * 3d. The tag provided is blank, e.g., "edit 4 t/" (This is the way to delete tags)
     * 3d1. The execution proceeds. The result is that at step 6, the employee at the given index has all their tags deleted.
-
-    Use case resumes at step 4.
+    <br> *Use case resumes from step 4.*<br><br>
 
 * 5a. User enter 'n' instead.
     * 5a1. System displays a response indicating that the command was aborted.
+    <br> *Use case ends.*<br><br>
 
-    Use case ends.
 
-
-### Use case 6 (UC6): Edit an employee's details
+**Use case 6 (UC6): Edit an employee's details**<br>
 
 **MSS**
 
@@ -617,38 +596,34 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3. User confirms their intent to execute a 'edit' command, entering 'y'.
 4. System edits that employee, deleting all previous tags, and adding the given tags.
 5. System displays a confirmation message showing that the employee has been edited, and their new details.
+   <br> *Use case ends.*
 
 **Extensions**
 
 * 1a. The user enters the command in the incorrect format.
     * 1a1. System shows an error message, along with the correct format for an edit command.
-
-    Use case resumes at step 1.
+    <br> *Use case resumes at step 1.*<br><br>
 
 * 1b. The given index is invalid.
     * 1b1. System shows an error message.
     * 1b2. The user modifies their command until the index is valid.
-
-    Use case resumes at step 2.
+    <br> *Use case resumes from step 2.*<br><br>
 
 * 1c. The user's proposed details are invalid.
     * 1c1. The system shows an error message for the relevant field for which the input restrictions are not adhered to.
     * 1c2. The user modifies their inputs until all of the proposed parameters are accepted.
-
-    Use case resumes at step 2.
+    <br> *Use case resumes from step 2.*<br><br>
 
 * 1d. User enters empty details.
     * 1d1. System shows an error message: "At least one field to edit must be provided."
-
-    Use case resumes at step 1.
+    <br> *Use case resumes from step 1.*<br><br>
 
 * 3a. User enter 'n' instead.
     * 3a1. System displays a response indicating that the command was aborted.
+    <br> *Use case ends.*<br><br>
 
-    Use case ends.
 
-
-### Use case 7 (UC7): Cycle through previous executed commands
+**Use case 7 (UC7): Cycle through previous executed commands**<br>
 
 **MSS**
 
@@ -660,29 +635,24 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 6.  System prefills the CLI with the command used in step 5.
 7.  User deletes the {phone field} and types {the email details}, then enters the command. (The command {"edit"} and the relevant {employee index} is already prepared)
 8.  System {edits the employee's email address in the records}.
-
-    Use case ends.
+    <br> *Use case ends.*
 
 **Extensions**
 
 * 2a. User has entered more than 10 unique commands.
     * 2a1. The oldest command is discarded and can no longer be cycled through.
-
-    Use case ends.
+    <br> *Use case ends.*<br><br>
 
 * 5a. There are no previous successfully executed commands.
     * 5a1. System does not do anything in response to up arrow (PgUp) key.
-
-    Use case ends.
+    <br> *Use case ends.*<br><br>
 
 * 6a. There are up to 10 previous successfully executed commands. User presses up arrow (PgUp) again.
     * 6a1. User presses up arrow (PgUp) key until their desired previous executed command appears. If there is already an input in the CLI, it is saved. User can also press down arrow (PgDn) key to get back to the more recent/original command.
     * 6a2. User stops cycling at their desired past/current command.
+    <br> *Use case resumes at step 7.*<br><br>
 
-    Use case resumes at step 7.
-
-
-### Use case 8 (UC8): Importing employee data
+**Use case 8 (UC8): Importing employee data**<br>
 
 **MSS**
 
@@ -691,22 +661,19 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3. System converts csv data into list of employees.
 4. System saves list of employees, overwriting any pre-existing employee data.
 5. System displays a confirmation message indicating the number of employees imported and the file used.
-
-    Use case ends.
+   <br> *Use case ends.*
 
 **Extensions**
 
 * 2a. User input filepath is invalid.
   * 2a1. System displays an error message.
-
-    Use case resumes at Step 1.
+  <br> *Use case resumes at Step 1.*<br><br>
 
 * 3a. File data is invalid (e.g. missing required header rows, duplicate persons).
   * 3a1. System displays an error message.
+  <br> *Use case resumes at step 1.*
 
-    Use case resumes at step 1.
-
-### Use case 9 (UC9): Exporting current employee data
+**Use case 9 (UC9): Exporting current employee data**<br>
 
 **MSS**
 
@@ -715,21 +682,17 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3. System converts app data into csv format.
 4. System saves csv file into target destination.
 5. System displays a confirmation message indicating the file destination.
-
-   Use case ends.
+   <br> *Use case ends.*
 
 **Extensions**
 
 * 2a. User input filepath is invalid.
     * 2a1. System displays an error message.
-
-      Use case resumes at Step 1.
+    <br> *Use case resumes at Step 1.*<br><br>
 
 * 2b. File already exists at target destination.
     * 2b1. System displays an error message.
-
-      Use case resumes at step 1.
-
+    <br> *Use case resumes at step 1.*
 
 ### Non-Functional Requirements
 
