@@ -179,27 +179,26 @@ This section describes some noteworthy details on how certain features are imple
 
 #### Implementation
 
-The undo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
+The undo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
 
 * `VersionedAddressBook#commit()` — Saves the current HRmanager state in its history.
 * `VersionedAddressBook#undo()` — Restores the previous HRmanager state from its history.
-* `VersionedAddressBook#redo()` — Restores a previously undone HRmanager state from its history.
 
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
+These operations are exposed in the `Model` interface as `Model#commitAddressBook()` and `Model#undoAddressBook()` respectively.
 
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
+Given below is an example usage scenario and how the undo mechanism behaves at each step.
 
 Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial HRmanager state, and the `currentStatePointer` pointing to that single HRmanager state.
 
-<puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
+<puml src="diagrams/UndoState0.puml" alt="UndoState0" />
 
 Step 2. The user executes `delete 5` command to delete the 5th employee in the HRmanager. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the HRmanager after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted HRmanager state.
 
-<puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
+<puml src="diagrams/UndoState1.puml" alt="UndoState1" />
 
 Step 3. The user executes `add n/David …​` to add a new employee. The `add` command also calls `Model#commitAddressBook()`, causing another modified HRmanager state to be saved into the `addressBookStateList`.
 
-<puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
+<puml src="diagrams/UndoState2.puml" alt="UndoState2" />
 
 <box type="info" seamless>
 
@@ -209,7 +208,7 @@ Step 3. The user executes `add n/David …​` to add a new employee. The `add` 
 
 Step 4. The user now decides that adding an employee was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous HRmanager state, and restores the HRmanager to that state.
 
-<puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3" />
+<puml src="diagrams/UndoState3.puml" alt="UndoState3" />
 
 
 <box type="info" seamless>
@@ -233,21 +232,13 @@ Similarly, how an undo operation goes through the `Model` component is shown bel
 
 <puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model" />
 
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the HRmanager to that state.
+Step 5. The user then decides to execute the command `list`. Commands that do not modify the HRmanager, such as `list`, will usually not call `Model#commitAddressBook()` or `Model#undoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
 
-<box type="info" seamless>
+<puml src="diagrams/UndoState4.puml" alt="UndoState4" />
 
-**Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest HRmanager state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
+Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all HRmanager states after the `currentStatePointer` will be purged. This is the behavior that most modern desktop applications follow.
 
-</box>
-
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the HRmanager, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all HRmanager states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …​` command. This is the behavior that most modern desktop applications follow.
-
-<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
+<puml src="diagrams/UndoState5.puml" alt="UndoState5" />
 
 The following activity diagram summarizes what happens when a user executes a new command:
 
@@ -255,13 +246,13 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 #### Design considerations:
 
-**Aspect: How undo & redo executes:**
+**Aspect: How undo executes:**
 
 * **Alternative 1 (current choice):** Saves the entire HRmanager.
   * Pros: Easy to implement.
   * Cons: May have performance issues in terms of memory usage.
 
-* **Alternative 2:** Individual command knows how to undo/redo by
+* **Alternative 2:** Individual command knows how to undo by
   itself.
   * Pros: Will use less memory (e.g. for `delete`, just save an employee being deleted).
   * Cons: We must ensure that the implementation of each individual command are correct.
@@ -466,7 +457,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     <br> *Steps 1a1-1a2 are repeated until the data provided are correct.*
     <br> *Use case resumes at step 2.*
 
-
 **Use case 2 (UC2): Delete employee**<br>
 
 **MSS**
@@ -617,8 +607,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. User requests to import employee data from destination of choice.
 2. System resolves path and checks validity.
 3. System converts csv data into list of employees.
-4. System saves list of employees, overwriting any pre-existing employee data.
-5. System displays a success message indicating the number of employees imported and the file used.
+4. System asks for user's confirmation. 
+5. User confirms decision to import.
+6. System saves list of employees, overwriting any pre-existing employee data.
+7. System displays a success message indicating the number of employees imported and the file used.
    <br> *Use case ends.*
 
 **Extensions**
@@ -630,6 +622,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 3a. File data is invalid (e.g. missing required header rows, duplicate persons).
   * 3a1. System displays an error message.
   <br> *Use case resumes at step 1.*
+
+* 4a. User cancels import.
+  <br> *Use case ends.*
 
 **Use case 8 (UC8): Exporting current employee data**<br>
 
@@ -805,7 +800,6 @@ testers are expected to do more *exploratory* testing.
    5. Test case: `search KEYWORD` (where original list has 3 entries, KEYWORD returns 1 match) followed by `delete 3`<br>
       Expected: Error message shown for invalid index since the index applies to the filtered list, not full list.
 
-
 ### Searching for employees
 
 1. Searching for employees using one or more keywords
@@ -889,42 +883,73 @@ testers are expected to do more *exploratory* testing.
 
 ### Importing employee list
 
-1. Importing employee data
+NOTE: If the command is valid, the confirmation feature is first triggered. The tester enters 'y' to proceed.
 
-   1. Test case: `import C:\Users\username\Downloads\test.csv` (Valid entry, assuming file format and data are valid)
-       Expected: Employee list is imported by parsing test.csv in user's Downloads folder, overwriting existing employee data.
+1. Importing employee data, regardless of OS
 
-   2. Test case: `import test.csv` (Valid entry, assuming file format and data are valid)
-       Expected: Employee list is imported by parsing test.csv in HRmanager's home folder, overwriting existing employee data.
-
-   3. Test case: `import C:\Users\username\invalid\path\nonexistent\test.csv` (Invalid entry)
-       Expected: Employee list is not imported. An error message is shown, indicating invalid path.
-
-   4. Test case:`import C:\Users\username\Downloads\wrongformat.csv` (Invalid entry, assuming file exists but is in the wrong format, e.g. duplicate persons, missing required headers, invalid data...)
-       Expected: Employee list is not imported. An error message is shown, indicating failure in parsing and the exact format error that caused it.
-
-   5. Test case: `import C:\Users\username\Downloads\test.txt` (Invalid entry)
+   1. Test case: `import test.csv` (Valid entry, assuming `test.csv` exists with valid data)<br>
+       Expected: Employee list is imported by parsing `test.csv` in HRmanager's home folder, overwriting existing employee data. Success message is shown with number of employees imported and the file path.
+   
+   2. Test case: `import invalid.csv` (Invalid entry, assuming `invalid.csv` exists, but is in the wrong format)<br>
+      Expected: Employee list is not imported. An error message is shown, indicating the first format error of `invalid.csv` encountered by the parser.
+   
+   3. Test case: `import test.txt` (Invalid entry)<br>
       Expected: Employee list is not imported. An error message is shown, indicating invalid file extension.
 
+   
+2. Importing employee data, on Windows OS
+
+   1. Test case: `import C:\Users\username\Downloads\test.csv` (Valid entry, assuming `test.csv` exists in `Downloads` with valid data)<br>
+   Expected: Employee list is imported by parsing `test.csv` in user's `Downloads` folder, overwriting existing employee data. Success message is shown with number of employees imported and the file path.
+
+   2. Test case: `import C:\Users\username\invalid\path\nonexistent\test.csv` (Invalid path)<br>
+     Expected: Employee list is not imported. An error message is shown, indicating invalid path.
+
+
+3. Importing employee data, on MacOS/Linux
+
+   1. Test case: `import /home/user/data.csv` (Valid entry, assuming `test.csv` exists with valid data)<br>
+      Expected: Employee list is imported by parsing `test.csv`, overwriting existing employee data. Success message is shown with number of employees imported and the file path.
+
+   2. Test case: `import "/home/user/My Data.csv"` (Valid entry)<br>
+      Expected: Employee list is imported by parsing `My Data.csv`, overwriting existing employee data. Success message is shown with number of employees imported and the file path.
+
+   3. Test case: `import /home/user/My Data.csv` (Invalid entry, no quotes around path containing space(s))<br>
+      Expected: Employee list is not imported. An error message is shown, indicating invalid path.
 
 ### Exporting employee list
 
-1. Exporting current employee data
+1. Exporting current employee data, regardless of OS
 
-   1. Test case: `export C:\Users\username\Downloads\test.csv` (Valid entry, assuming tester doesn't have existing test.csv in Downloads folder)
-        Expected: A file test.csv is created in the User's Downloads folder, containing the current employee data in csv format.
+   1. Test case: `export employees.csv` (Valid path, assuming no existing employees.csv in HRmanager's home folder)<br>
+        Expected: A file `employees.csv` is created in HRmanager's home folder, containing the current employee data in csv format. The success message is shown, with the number of people exported and the file path.
 
-   2. Test case: `export employees.csv` (Valid path)
-        Expected: A file employees.csv is created in HRmanager's home folder, containing the current employee data in csv format.
-
-   3. Test case: `export C:\Users\username\Downloads\existingfile.csv` (Invalid entry, existing file in destination)
-        Expected: No csv file is created. An error message is shown, indicating existing file at target destination.
-
-   4. Test case: `export employees.txt` (Invalid path, only csv exports are allowed)
-        Expected: No csv file is created. An error message is shown, indicating the required .csv extension.
-
-   5. Test case: `export C:\Users\username\nonexisting\invalid\path\employees.csv` (Invalid entry, path is invalid)
+   2. Test case: `export employees.txt` (Invalid path, only csv exports are allowed)<br>
         Expected: No csv file is created. An error message is shown, indicating invalid path.
+   
+   3. Test case: `export duplicate.csv` (Invalid path, assuming existing duplicate.csv in HRmanager's home folder)<br>
+        Expected: No csv file is created. An error message is shown, indicating no overwriting of local files.
+
+
+2. Exporting current employee data, on Windows OS
+
+   1. Test case: `export C:\Users\username\Downloads\test.csv` (Valid entry, assuming no existing test.csv in directory)<br>
+         Expected: A file `test.csv` is created in the User's Downloads folder, containing the current employee data in csv format. The success message is shown, with the number of people exported and the file path.
+
+   2. Test case: `export C:\Users\username\Downloads\new\path\employees.csv` (Valid entry, assuming no existing subdirectory `new`)<br>
+      Expected: A directory `new` and a subdirectory `path` are created inside User's Downloads folder, a file employees.csv containing the current employee data in csv format is created inside. The success message is shown, with the number of people exported and the file path.
+
+
+3. Exporting current employee data, on MacOs/Linux
+
+    1. Test case: `export /home/user/data.csv` (Valid entry, assuming no existing data.csv in directory)<br>
+       Expected: A file `data.csv` is created in the directory, containing the current employee data in csv format. The success message is shown, with the number of people exported and the file path.
+
+    2. Test case: `export "/home/user/My Data.csv"` (Valid entry)<br>
+       Expected: A file `My Data.csv` is created in the directory, containing the current employee data in csv format. The success message is shown, with the number of people exported and the file path.
+   
+    3. Test case: `export /home/user/My Data.csv` (Invalid entry, no quotes around path containing space(s))<br>
+       Expected: No csv file is created. An error message is shown, indicating invalid path.
 
 
       
