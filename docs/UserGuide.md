@@ -406,7 +406,11 @@ Confirmation Required: This command requires confirmation before execution to pr
 
 ### Import employee data: `import`
 
-Replaces all current data with employees from a (comma-separated values) file. File must be `.csv` with headers `name`, `phone`, `email`, `role`, `department` (`tag` optional). The file size limit is 100kB, and employee limit is 200. All data validation rules apply (e.g., no duplicate names, invalid or missing fields). See [parameter restrictions](#parameter-restrictions-for-each-field) for details on acceptable values for each field.
+Replaces all current data with employees from a CSV (comma-separated values) file. File must end in `.csv` with headers `name`, `phone`, `email`, `role`, `department` (`tags` optional). The file size limit is 100kB, and employee limit is 200. All data validation rules apply (e.g., no duplicate employee names, invalid or missing fields). See [parameter restrictions](#parameter-restrictions-for-each-field) for details on acceptable values for each field.
+* Only one layer of quotes can be parsed.
+* For MacOS/Linux, file paths containing spaces must be quoted.
+* Optionally, one `tags` column is accepted. All tags must be included in one single field, e.g. `tag1, tag2, tag3`.
+* In the case of duplicate headers, the left-most column is taken.
 
 Format: `import [FILE PATH]`
 
@@ -414,7 +418,11 @@ Format: `import [FILE PATH]`
 
 Examples:
 * `import employees.csv`
-* `import C:\Users\username\Downloads\2026_employee_list.csv`
+* `import C:\Users\username\Downloads\2026_employee_list.csv` (Windows)
+* `import "C:\My Documents\data.csv"` (Windows)
+* `import /home/user/data.csv` (MacOS/Linux)
+* `import "/home/user/My Data.csv"` (MacOs/Linux)
+
   </box>
 
 <box theme="success" icon=":fa-solid-lightbulb:">
@@ -439,6 +447,10 @@ Undo Possible: This command can be reversed if executed recently. See [Undo](#un
 Confirmation Required: This command requires confirmation before execution to prevent accidental data loss. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
 </box>
 
+Correct csv file format:
+
+![import command](images/importCommandCsv.png)
+
 Successful command output:
 
 ![import command](images/importCommand.png)
@@ -456,8 +468,9 @@ Format: `export [FILE PATH]`
 
 Examples:
 * `export employees.csv`
-* `export C:\Users\username\Desktop\2026_employee_list.csv`
-</box>
+* `export C:\Users\username\Desktop\2026_employee_list.csv` (Windows)
+* `export /home/user/data.csv` (MacOS/Linux)
+* </box>
 
 <box type="important" icon=":fa-solid-exclamation-triangle:">
 
@@ -547,7 +560,7 @@ This confirmation step is designed to prevent mistakes. If you accidentally type
 
 ### Undo an executed command: `undo`
 
-Reverses the effects of a prior `add`, `edit`, `delete`, `clear`, or `import` command (Collectively: "Eligible commands").
+Reverses the effects of a prior `add`, `edit`, `delete`, `clear`, or `import` command (Up to 10 commands) (Collectively: "Eligible commands").
 * Each previous successful eligible command is saved (up to 10 of the latest ones). If there are sufficient such saved commands, you can execute `undo` up to 10 times on the 10 eligible commands in a consecutive sequence.
 * If you close the app and re-run it, you will lose command execution history and hence the ability to do `undo` on those commands from previous sessions.
 
@@ -558,49 +571,42 @@ Format: `undo`
 Command execution sequence example:
 * `undo` can be used repeatedly: the execution sequence
 ```
-> add (parameters...)
-> edit (parameters...)
-> y
-> clear
-> y
-> undo
-> undo
-> undo
+> add (parameters...) // execute add
+> edit (parameters...) // execute edit
+> undo // reverses edit (more recent commands first)
+> undo // reverses add
 ```
-will not result in any net change because all the changes are reversed.
+will not result in any net change because all the changes are reversed. Beyond 10 undos, attempting undo again will result in output that shows that there are no more commands to undo, because the oldest saved command is removed to accomodate new saved commands when there are already 10 saved commands.
 
-* `undo` ignores ineligible commands: the execution sequence
+* `undo` ignores ineligible commands: the execution sequence 
 ```
-> add (parameters...)
+> add (parameters...) // execute add
 > help 
-> edit (parameters...)
-> y
-> clear
-> y
+> edit (parameters...) // execute edit
 > search ronald
 > list
-> undo
-> undo
-> undo
+> undo // reverses edit
+> undo // reverses add
 ```
-is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored.
+is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored by the undo command.
 
 * `undo` still works even if there are commands not eligible for `undo` in the past sequence; it will simply ignore them. For example, if you execute
 ```
-> add (params...)
-> help
-> undo
+> add (params...) // execute add
+> help // execute help
+> undo // reverses add
 ```
-then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`.
+then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`. Such ineligible commands do not contribute to the 10 saved commands.
 
-* `undo` can be used up to 10 times, given there are sufficient eligible commands saved: After adding 11 people (with 11 `add (params...)`), you can enter `undo` 10 times to remove the 10 latest additions. Thereafter, using `undo` again results in the hint "There are no commands to undo.". To be clear, consider noting that the example sequence `add (params...)`, then `help`; collectively contributes 1 saved eligible command since `help` is not eligible for undo.
+Design considerations:
+`undo` clears the filter and returns to the main view. If the filter were silently restored, users might not realize they are still in a filtered view, especially after multiple undo operations. This also maintains a single source of truth by ensuring users always return to a complete, reliable overview after undo, reducing ambiguity.
 
 </box>
 
 <br>
 
 
-### Cycle through previous executed commands
+### Cycle through command history (previous executed commands)
 
 You can pre-fill the command box with your last successful commands using the **Up arrow key**. Use Up/Down arrows to browse through your last 10 successful distinct commands only (excluding y/n).
 * You can only cycle through commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to toggle/cycle through them.
@@ -665,9 +671,10 @@ Action     | Format, Examples
 **Search** | `search KEYWORD [MORE_KEYWORDS]...`<br> e.g., `search James @`
 **Stat** | `stat MODE`<br> e.g., `stat tag`, `stat dept`, `stat role`
 **Cycle commands** | up/down arrow keys
+**Undo**   | `undo`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com d/Finance`
 **Delete** | `delete INDEX [MORE_INDEXES]` or `del INDEX [MORE_INDEXES]`<br> e.g., `delete 3`, `delete 1 4 5`
 **Clear**  | `clear`
-**Import** | `import [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
+**Import** | `import [FILE PATH]`<br> e.g., `import C:\Users\John\Desktop\employees.csv`
 **Export** | `export [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
 **Exit**   | `exit`
