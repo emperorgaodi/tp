@@ -404,7 +404,7 @@ Examples:
 * `import /home/user/data.csv` (MacOS/Linux)
 * `import "/home/user/My Data.csv"` (MacOs/Linux)
 
-Notes on file path format:
+Notes on [FILE PATH] format:
 * Must end in `.csv`. 
 * Only one layer of quotes can be parsed.
 * For MacOS/Linux, file paths containing spaces must be quoted.
@@ -451,7 +451,8 @@ Format: `export [FILE PATH]`
 
 Examples:
 * `export employees.csv`
-* `export C:\Users\username\Desktop\2026_employee_list.csv`
+* `export C:\Users\username\Desktop\2026_employee_list.csv` (Windows)
+* `export /home/user/data.csv` (MacOS/Linux)
 
 Additional notes:
 * The full employee list is exported, even when the on-screen view is filtered (e.g., after `search`).
@@ -463,9 +464,6 @@ Successful command output:
 
 ![export command](images/exportCommand.png)
 <box type="info" seamless>
-
-**⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental edits. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
-</box>
 
 <br>
 
