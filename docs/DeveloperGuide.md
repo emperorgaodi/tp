@@ -175,9 +175,7 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
-### \[Proposed\] Undo/redo feature
-
-#### Proposed Implementation
+### Undo feature
 
 The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
 
@@ -265,12 +263,6 @@ The following activity diagram summarizes what happens when a user executes a ne
   itself.
   * Pros: Will use less memory (e.g. for `delete`, just save an employee being deleted).
   * Cons: We must ensure that the implementation of each individual command are correct.
-
-_{more aspects and alternatives to be added}_
-
-### \[Proposed\] Data archiving
-
-_{Explain here how the data archiving feature will be implemented}_
 
 ### Search feature
 
@@ -480,9 +472,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. User requests to remove one or more employees by specifying their index numbers in the displayed list.
 2. System validates the provided index numbers.
 3. System prompts the user for confirmation that they want to execute a deletion.
-4. User confirms their intent to execute a 'delete' command, entering 'y'.
+4. User confirms their intent to proceed with the deletion.
 5. System removes the corresponding employee records from the system.
-6. System displays a confirmation message indicating the number of employees deleted.
+6. System displays a success message indicating the number of employees deleted and their names.
     <br> *Use case ends.*
 
 **Extensions**
@@ -498,7 +490,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 2a2. User modifies the command until the index is valid.
     <br> *Use case resumes from step 2.*<br><br>
 
-* 4a. User enter 'n' instead.
+* 4a. User decides not to proceed with the deletion.
     * 4a1. System displays a response indicating that the command was aborted.
     <br> *Use case ends.*
 
@@ -521,7 +513,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User enters the `search` command with one or more keywords.
+1.  User requests to search for employees using one or more keywords.
 2.  System validates the search input.
 3.  System processes the search query against the existing employee records.
 4.  System displays a filtered list of all employees that match the search.
@@ -701,22 +693,28 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
 2. The system should respond to user commands within **1 second** under normal usage conditions.
 3. The system should be able to store and manage at least **100 employee records** while maintaining command response times within **1 second**.
-4. The system should be usable entirely through a **Command Line Interface (CLI)** without requiring graphical interaction such as mouse input.
 5. The system should be usable by **HR managers who are not highly technical**, meaning commands should be simple and documentation should clearly explain how to use them.
 6. The system should follow **standard Java coding conventions and modular design principles** to ensure maintainability.
 7. The system should ensure that employee data stored in the system remains consistent and is not corrupted during normal usage.
 8. The system should ensure that employee information stored locally is not transmitted over the network without user intent.
 9. The system should remain stable when invalid commands or inputs are entered and should not crash during normal usage.
 10. The system should be packaged as a single executable JAR file so that users can run the application without additional installation steps beyond having Java installed.
+11. The system inputs should be primarily through CLI with minimal reliance on mouse interactions, to cater to users who prefer keyboard-driven interfaces.
 
 ### Glossary
 
+* **HRmanager**: The name of our desktop application for managing employee records.
 * **Mainstream OS**: Windows, Linux, Unix, MacOS
-* **HR Manager**: The primary user of the system who manages employee records using the application.
 * **Employee Record**: A collection of information stored in the system about an employee, such as name, email, phone number, role, and department.
 * **Command Line Interface (CLI)**: A text-based interface where users interact with the application by typing commands.
 * **Department**: The organizational unit an employee belongs to (e.g., `Engineering`, `Finance`, `Human Resources`).
-* **Tag**: A label that can be attached to an employee record for categorization purposes. Tags must be alphanumeric and 1-30 characters in length. Examples include "HR", "Manager", "FullTime", "Intern".
+* **Role**: The position or job title of an employee (e.g., `Software Engineer`, `HR Manager`).
+* **Alias**: A user-defined shortcut for a command (e.g., `d` as an alias for `delete`).
+* **CSV**: Comma-Separated Values, a common file format for storing tabular data.
+* **JSON**: JavaScript Object Notation, a common file format for storing structured data.
+* **JAR**: Java Archive, a package file format used to aggregate many Java class files and associated metadata and resources into one file for distribution.
+* **Prefix**: A specific string used in command syntax to indicate the type of data being entered (e.g., `n/` for name, `p/` for phone).
+* **Preamble**: The part of the command before the first valid prefix. It should be empty or just whitespace for a valid command.
 
 --------------------------------------------------------------------------------------------------------------------
 
