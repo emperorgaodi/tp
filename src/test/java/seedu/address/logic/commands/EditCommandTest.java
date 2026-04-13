@@ -353,7 +353,8 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
         Person targetPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         String actionSummary = String.format(EditCommand.ACTION_SUMMARY_FORMAT, INDEX_FIRST_PERSON.getOneBased());
-        String impactSummary = String.format(EditCommand.IMPACT_SUMMARY_WITH_NAMES_FORMAT, targetPerson.getName().getFullName());
+        String impactSummary = String.format(EditCommand.IMPACT_SUMMARY_WITH_NAMES_FORMAT,
+                targetPerson.getName().getFullName());
         String expectedPrompt = ConfirmationPromptFormatter.format(actionSummary, impactSummary);
         assertEquals(expectedPrompt, editCommand.getConfirmationPrompt(model));
     }
