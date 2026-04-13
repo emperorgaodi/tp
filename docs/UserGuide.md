@@ -237,6 +237,7 @@ Successful command output:
 * __Characters:__ The tag should consist of only alphanumeric characters and/or hyphens (`-`) and/or spaces (` `) and cannot be blank. The tag should not contain consecutive hyphens and/or spaces. The tag should not start or end with a hyphen. Leading and trailing spaces will be ignored. No other characters are allowed.
 * __Case sensitivity:__ The tag entered is case-insensitive eg. inputting `friend` will be the same as `Friend` and `FRIEND`. The tag will be stored in HRmanager in lower casing.
 * __Input length:__ The tag must be between 1 and 30 characters long (inclusive).
+* __Maximum count:__ Each employee can have at most 20 tags.
 
 #### Index (for `edit` and `delete` commands)
 
