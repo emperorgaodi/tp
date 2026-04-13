@@ -647,6 +647,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 2b1. System displays an error message.
     <br> *Use case resumes from step 1.*
 
+
 **Use case 9 (UC9): Undo previous command**<br>
 
 **MSS**
@@ -667,6 +668,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
   * 2b1. System identifies the most recent valid previous state, ignoring any non-data-modifying commands.
   <br> *Use case resumes from step 3.*<br><br>
 
+
 **Use case 10 (UC10): View and switch statistics dashboard mode**<br>
 
 **MSS**
@@ -685,6 +687,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
   * 2a1. System displays an error message indicating the correct format.
   <br> *Use case ends.*<br><br>
 
+
 ### Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
@@ -697,6 +700,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 9. The system should remain stable when invalid commands or inputs are entered and should not crash during normal usage.
 10. The system should be packaged as a single executable JAR file so that users can run the application without additional installation steps beyond having Java installed.
 11. The system inputs should be primarily through CLI with minimal reliance on mouse interactions, to cater to users who prefer keyboard-driven interfaces.
+
 
 ### Glossary
 
