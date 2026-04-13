@@ -504,7 +504,7 @@ Since HRmanager stores **sensitive employee data** (personal information, contac
 > delete 1
 ⚠ Warning! ⚠ Please confirm this action. Enter 'y' to proceed or 'n' to cancel.
 Action: Delete 1 employee(s)
-Impact: Permanently removes: John Doe
+Impact: The selected employee record(s) will be permanently removed: John Doe.
 
 > y
 Employee deleted successfully
