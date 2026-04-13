@@ -134,9 +134,9 @@ This yellow box with a redo icon indicates that action can be undone. Use `undo`
 * Words in `UPPER_CASE` are the parameters to be supplied by the user.<br>
   e.g. in `add n/NAME`, `NAME` is a parameter which can be replaced by `John Doe`.
 * Parameters in square brackets are optional.<br>
-  e.g `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+  e.g `n/NAME [t/TAG]` can be used as `n/John Doe t/junior` or as `n/John Doe`.
 * Parameters with `…` after them can be used multiple times including zero times.<br>
-  e.g. `[t/TAG]…` can be used as ` ` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
+  e.g. `[t/TAG]…` can be used as ` ` (i.e. 0 times), `t/junior`, `t/junior t/intern` etc.
 * Parameters can be in any order.<br>
   e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 * Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `undo`, `exit` and `clear`) will be ignored.<br>
@@ -185,7 +185,7 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​`
 
 Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com r/Receptionist d/Operations` adds an employee named John Doe with the specified details.
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com r/Associate Director d/Finance p/1234567` adds an employee named Betsy Crowe with a tag, `friend`.
+* `add n/Betsy Crowe t/junior e/betsycrowe@example.com r/Associate Director d/Finance p/1234567` adds an employee named Betsy Crowe with a tag, `junior`.
 </box>
 
 <box theme="success" icon=":fa-solid-lightbulb:">
@@ -238,7 +238,7 @@ Successful command output:
 #### Tag (`t/`)
 
 * __Characters:__ The tag should consist of only alphanumeric characters and/or hyphens (`-`) and/or spaces (` `) and cannot be blank. The tag should not contain consecutive hyphens and/or spaces. The tag should not start or end with a hyphen. Leading and trailing spaces will be ignored. No other characters are allowed.
-* __Case sensitivity:__ The tag entered is case-insensitive eg. inputting `friend` will be the same as `Friend` and `FRIEND`. The tag will be stored in HRmanager in lower casing.
+* __Case sensitivity:__ The tag entered is case-insensitive eg. inputting `junior` will be the same as `Junior` and `JUNIOR`. The tag will be stored in HRmanager in lower casing.
 * __Input length:__ The tag must be between 1 and 30 characters long (inclusive).
 * __Maximum count:__ Each employee can have at most 20 tags.
 
@@ -462,7 +462,7 @@ Undo Possible: This command can be reversed if executed recently. See [Undo](#un
 
 Correct csv file format:
 
-![import command](images/importCommandCsv.png)
+![import command](images/aaa.png)
 
 Successful command output:
 
@@ -546,7 +546,6 @@ Since HRmanager stores **sensitive employee data** (personal information, contac
 <box type="info" icon=":fa-solid-code:">
 
 The text starting with `>` shows the command you type into HRmanager. Do not type the `>` symbol itself.
-<br>The text after the `//` is a comment or explanation, not part of the actual command.<br>
 
 <br>Command execution sequence example:
 ```
@@ -609,14 +608,6 @@ will not result in any net change because all the changes are reversed. Beyond 1
 ```
 is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored by the undo command.
 
-* `undo` still works even if there are commands not eligible for `undo` in the past sequence; it will simply ignore them. For example, if you execute
-```
-> add (params...) // execute add
-> help // execute help
-> undo // reverses add
-```
-then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`. Such ineligible commands do not contribute to the 10 saved commands.
-
 Design considerations:
 `undo` clears the filter and returns to the main view. If the filter were silently restored, users might not realize they are still in a filtered view, especially after multiple undo operations. This also maintains a single source of truth by ensuring users always return to a complete, reliable overview after undo, reducing ambiguity.
 
@@ -648,11 +639,10 @@ The text starting with `>` shows the command you type into HRmanager. Do not typ
 
 > (Press Up arrow once)  // Command box shows: search Engineer
 > (Press Up arrow again) // Command box shows: add n/John p/98765432 e/john@example.com r/Engineer d/Engineering
-> (Press Down arrow once)  // Command box shows: search Engineer
-> (Press Down arrow again) // Command box shows: add n/Jane Smith (incomplete command, not lost)
+> add n/Jane p/91234567 e/jane@example.com r/Engineer d/Engineering // edited from John's add command
 ```
 
-* You can then modify the retrieved command (e.g., change the name from John Doe to John Tan) and press Enter to execute the new command.
+* You can then modify the retrieved command (e.g., change the name from John to Jane) and press Enter to execute the new command.
 * The current pending command is saved when you browse history, so typing add n/ then pressing Up arrow won't lose your partial input.
 
 </box>
@@ -697,7 +687,7 @@ Furthermore, certain edits can cause HRmanager to behave in unexpected ways (e.g
 **A**: Use the `export` command on your current computer to save your employee data as a CSV file. Copy this CSV file to your new computer, then use the `import` command in HRmanager to load your data. This will overwrite the sample data with your own records and is the recommended way to transfer data between computers.
 
 **Q**: How do I import multiple tags for a single employee in CSV?<br>
-**A**: In the CSV file, ensure that all tags for an employee are included in a single field (e.g., `tags`) and separated by commas. For example, if an employee has the tags "friend", "colleague", and "certified", the `tags` field for that employee should be formatted as `friend, colleague, certified`. When you import this CSV file into HRmanager, it will correctly parse the tags and assign them to the employee.
+**A**: In the CSV file, ensure that all tags for an employee are included in a single field (e.g., `tags`) and separated by commas. For example, if an employee has the tags "junior", "intern", and "certified", the `tags` field for that employee should be formatted as `junior, intern, certified`. When you import this CSV file into HRmanager, it will correctly parse the tags and assign them to the employee.
 
 <br>
 
@@ -707,14 +697,14 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Help**   | `help`
 **List**   | `list`
-**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com r/Software Engineer d/Engineering t/friend t/colleague`
+**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com r/Software Engineer d/Engineering t/junior t/intern`
 **Search** | `search KEYWORD [MORE_KEYWORDS]...`<br> e.g., `search James @`
 **Stat** | `stat MODE`<br> e.g., `stat tag`, `stat dept`, `stat role`
-**Cycle commands** | up/down arrow keys
-**Undo**   | `undo`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com d/Finance`
 **Delete** | `delete INDEX [MORE_INDEXES]` or `del INDEX [MORE_INDEXES]`<br> e.g., `delete 3`, `delete 1 4 5`
 **Clear**  | `clear`
 **Import** | `import [FILE PATH]`<br> e.g., `import C:\Users\John\Desktop\employees.csv`
 **Export** | `export [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
 **Exit**   | `exit`
+**Undo**   | `undo`
+**Cycle commands** | up/down arrow keys
