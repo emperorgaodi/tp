@@ -399,13 +399,29 @@ Format: `import [FILE PATH]`
 
 Examples:
 * `import employees.csv`
-* `import C:\Users\username\Downloads\2026_employee_list.csv`
+* `import C:\Users\username\Downloads\2026_employee_list.csv` (Windows)
+* `import "C:\My Documents\data.csv"` (Windows)
+* `import /home/user/data.csv` (MacOS/Linux)
+* `import "/home/user/My Data.csv"` (MacOs/Linux)
 
-Additional notes:
-* The target file must be a `.csv` file with a valid header row: `name, phone, email, role, department, tags` (tags optional, any order).
+Notes on [FILE PATH] format:
+* Must end in `.csv`. 
+* Only one layer of quotes can be parsed.
+* For MacOS/Linux, file paths containing spaces must be quoted.
+
+Notes on csv file format:
+* Must contain a valid header row containing all of `name, phone, email, role, department` in any order.
+* Optionally, one `tags` column is accepted. All tags must be included in one single field, e.g. `tag1, tag2, tag3`.
+* In the case of duplicate headers, the left-most column is taken.
 * File size limit: 100kB. Employee limit: 200 employees.
 * All data validation rules apply (e.g., no duplicate names, invalid or missing fields). [Parameter restrictions](#parameter-restrictions-for-each-field)
-* When multiple errors exist, only the first error is reported.
+
+When multiple errors exist, only the first error is reported.
+
+Example of correct csv file format:
+
+![import command](images/importCommandCsv.png)
+
 
 Alternative ways to import:
 1) Drag the file into HRmanager's home folder, then run `import filename.csv` 
@@ -435,7 +451,8 @@ Format: `export [FILE PATH]`
 
 Examples:
 * `export employees.csv`
-* `export C:\Users\username\Desktop\2026_employee_list.csv`
+* `export C:\Users\username\Desktop\2026_employee_list.csv` (Windows)
+* `export /home/user/data.csv` (MacOS/Linux)
 
 Additional notes:
 * The full employee list is exported, even when the on-screen view is filtered (e.g., after `search`).
@@ -447,9 +464,6 @@ Successful command output:
 
 ![export command](images/exportCommand.png)
 <box type="info" seamless>
-
-**⚠️ Confirmation Required:** This command requires confirmation before execution to prevent accidental edits. See [Confirmation Prompts](#confirmation-prompts) for details on how to respond.
-</box>
 
 <br>
 
@@ -539,64 +553,65 @@ What this feature does:
 * Reverse/undo the effects of a previous successful eligible command.
 * Each previous successful eligible command is saved (up to 10 of the latest ones). Hence, if there are sufficient such saved commands, you can execute `undo` up to 10 times on the 10 eligible commands in a consecutive sequence.
 * You can only undo commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to do `undo` on those commands from previous sessions.
+* If in a filtered view, `undo` clears the filter and returns to the main view.
 
 Additional notes:
 * Extraneous parameters are ignored (for example, `undo now` or `undo 3` is treated as `undo`). See: Extraneous parameters under [Notes about the command format](#notes-about-the-command-format)
 * `undo` is intended as a quality of life feature primarily to save time that would be spent reversing a few of the most recent changes if users change their mind. Given this, and that most users are likely to only undo a few recent actions, limiting undo to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour arising from a large number of reversals. 
 
 Examples:
-* `undo` can be used repeatedly: the execution sequence
+* `undo` can be used repeatedly up to 10 times from the latest command: the execution sequence
 ```
-> add (parameters...)
-> edit (parameters...)
-> y
-> clear
-> y
-> undo
-> undo
-> undo
+> add (parameters...) // execute add
+> edit (parameters...) // execute edit
+> undo // reverses edit (more recent commands first)
+> undo // reverses add
 ```
-will not result in any net change because all the changes are reversed.
+will not result in any net change because all the changes are reversed. Beyond 10 undos, attempting undo again will result in output that shows that there are no more commands to undo, because the oldest saved command is removed to accomodate new saved commands when there are already 10 saved commands.
+
 * `undo` ignores ineligible commands: the execution sequence 
 ```
-> add (parameters...)
+> add (parameters...) // execute add
 > help 
-> edit (parameters...)
-> y
-> clear
-> y
+> edit (parameters...) // execute edit
 > search ronald
 > list
-> undo
-> undo
-> undo
+> undo // reverses edit
+> undo // reverses add
 ```
-is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored.
+is effectively the same as the above example and will not result in any net change because all the changes are reversed. The `help`, `search` and `list` commands are ineligible and are ignored by the undo command.
+
 * `undo` still works even if there are commands not eligible for `undo` in the past sequence; it will simply ignore them. For example, if you execute
 ```
-> add (params...)
-> help
-> undo
+> add (params...) // execute add
+> help // execute help
+> undo // reverses add
 ```
-then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`. 
-* `undo` can be used up to 10 times, given there are sufficient eligible commands saved: After adding 11 people (with 11 `add (params...)`), you can enter `undo` 10 times to remove the 10 latest additions. Thereafter, using `undo` again results in the hint "There are no commands to undo.". To be clear, consider noting that the example sequence `add (params...)`, then `help`; collectively contributes 1 saved eligible command since `help` is not eligible for undo.
+then the execution of `undo` will ignore `help` (which is not eligible for undo) and will reverse the effects of `add`. Such ineligible commands do not contribute to the 10 saved commands.
+
+Design considerations:
+`undo` clears the filter and returns to the main view. If the filter were silently restored, users might not realize they are still in a filtered view, especially after multiple undo operations. This also maintains a single source of truth by ensuring users always return to a complete, reliable overview after undo, reducing ambiguity.
 
 <br>
 
 
-### Cycle through previous executed commands
+### Cycle through command history (previous executed commands)
 
-You can pre-fill the command box with your last successful commands using the **PgUp (Up arrow) key** on your keyboard. This allows you to easily repeat your last commands without re-typing it in its entirety. This is also useful for referring back to the command written, which otherwise disappears after execution.
+You can pre-fill the command box with your last successful commands using the **non-numpad Up arrow key** on your keyboard. This allows you to easily repeat your last commands without re-typing it in its entirety. This is also useful for referring back to the command written, which otherwise disappears after execution.
 
-* Command history navigation: Use the **PgUp (Up arrow)** key to move towards older commands, **PgDn (Down arrow) key** to move towards latest commands.
-* Only successful commands are saved.
-* Up to **10** past commands are saved. Thereafter, the oldest command is deleted to accomodate a new one.
-* The current pending command is saved when the command history is explored, so your progress on current half-written commands is not lost when you browse the command history.
-* The latest command will not be saved if it is exactly the same as the previous consecutively executed one (that is already saved).
-* Confirmatory commands like 'y' and 'n' are not saved.
-* You can only cycle through commands executed in the current session. That is, if you close the app and re-run it, you will lose command execution history and hence the ability to toggle/cycle through them.
+Format for command history navigation: Use the **non-numpad Up arrow key** key to move towards older commands, **non-numpad Down arrow key** to move towards latest commands.
+
+* Cycling is possible for only up to 10 distinct recent commands.
+* You can only cycle through commands executed in the current session: If you close the app and re-run it, you will lose command execution history and hence the ability to toggle/cycle through commands executed before closing the app.
 
 Additional notes:
+* Only successful commands are saved.
+* Up to **10** past commands are saved. Thereafter, the oldest command is deleted to accomodate a new one.
+* The current pending command is saved when the command history is explored, so progress on half-written commands is not lost when browsing the command history.
+* The latest command will not be saved if it is exactly the same as the previous consecutively executed one (that is already saved).
+* Confirmatory commands like 'y' and 'n' are trivial and not saved.
+
+Design justification:
 * This command history cycling feature is intended as a quality of life feature primarily to save time that would be spent re-typing similar commands. Given this, and that most users are likely to only use a few of the most recent commands, limiting cycling to a maximum depth of 10 eligible actions in the past will cover most user needs while avoiding unnecessary complexity and unexpected behaviour. 
 
 <br>
@@ -661,9 +676,10 @@ Action     | Format, Examples
 **Search** | `search KEYWORD [MORE_KEYWORDS]...`<br> e.g., `search James @`
 **Stat** | `stat MODE`<br> e.g., `stat tag`, `stat dept`, `stat role`
 **Cycle commands** | up/down arrow keys
+**Undo**   | `undo`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com d/Finance`
 **Delete** | `delete INDEX [MORE_INDEXES]` or `del INDEX [MORE_INDEXES]`<br> e.g., `delete 3`, `delete 1 4 5`
 **Clear**  | `clear`
-**Import** | `import [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
+**Import** | `import [FILE PATH]`<br> e.g., `import C:\Users\John\Desktop\employees.csv`
 **Export** | `export [FILE PATH]`<br> e.g., `export C:\Users\John\Desktop\employees.csv`
 **Exit**   | `exit`
