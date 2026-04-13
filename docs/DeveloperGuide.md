@@ -964,3 +964,25 @@ Delete or rename `HRmanager.json`. Start up the application.
 - The `HRmanager.json` file will be created (with sample entries) only after a data-modifying command (e.g., add, delete, edit) is executed.
 
 ### Future Enhancements
+
+
+## **Appendix: Effort**
+
+The development of HRManager required considerable effort which extended well beyond AddressBook-Level3's baseline (AB3). Whilst AB3 provided a robust foundation, we have added numerous specific enhancements aimed at improving our userbase (Human Resoure Managers)'s experience.
+This appendix evaluates the effort our team invested and how our project evolved from the initial AB3 codebase.
+
+### 1. Stats Panel Integration
+One of the biggest changes to the project was the introduction of the Stats Panel. Recognizing that HR professionals need to see data at a quick glance, we designed a dashboard that aggregates database metrics (e.g., employee counts by department, role distributions) dynamically. 
+*   **The Effort:** Building this required tightly coupling the new UI components to the underlying `ObservableList` of employees. We had to implement listeners which recalculate statistics seamlessly whenever the database changes, whilst ensuring that thread safety and performance were not compromised.
+
+
+### 2. Quality of Life (QoL) Features
+To elevate the application from a basic address book to a professional tool, we dedicated considerable time to QoL features that streamline the user experience:
+*   **Confirmation States:** For destructive actions (like clearing the database), we implemented a confirmation requirement. This involved modifying the standard command execution loop to pause, wait for a `Y`/`N` input, and hold a temporary state without breaking the overarching Model.
+*   **Command Cycling:** We implemented shell-like command history navigation (using up/down arrow keys), which required adding a command history tracker to the UI controller and syncing it with user keystrokes.
+*   **Undo Functionality:** Introducing an undo mechanism was a highly complex endeavor. It required us to snapshot the system state before any mutative command, ensuring we could safely revert data without memory leaks or state corruption.
+
+### 3. Import / Export System
+While AB3 handles basic background JSON, HR professionals primarily work with spreadsheets. We implemented robust `.csv` Import and Export commands.
+*   **The Effort:** This was far more difficult than simple File I/O. We had to build a custom CSV parser and serializer capable of mapping raw strings to our domain-specific objects (like `Department`, `Leave`, or `Role`), whilst handling formatting errors (duplicates, missing values, etc.) gracefully. The system had to be capable of bulk-adding entries, validating them on the fly, and rejecting malformed files without corrupting the existing HRManager database.
+
