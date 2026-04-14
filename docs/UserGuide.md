@@ -177,7 +177,7 @@ Successful command output:
 
 Adds a new employee to HRmanager and stores their employee details persistently - helping HR managers track new employees along with existing employees.
 * All compulsory fields (`n/`, `p/`, `e/`, `r/`, `d/`) must be provided exactly once. `t/TAG` is optional (0 or more).
-* Up to 200 employees can exist in HRmanager at the same time.
+* Up to 200 employees can exist in HRmanager at any one point.
 
 Format: `add n/NAME p/PHONE e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​`
 
