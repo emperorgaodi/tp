@@ -619,8 +619,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
   * 3a1. System displays an error message.
   <br> *Use case resumes from step 1.*<br><br>
 
-* 4a. User cancels import.
-  <br> *Use case ends.*<br><br>
+* 4a. User decides not to proceed with the import.
+  * 4a1. System displays a response indicating that the command was aborted.
+    <br> *Use case ends.*<br><br>
 
 **Use case 8 (UC8): Exporting current employee data**<br>
 
