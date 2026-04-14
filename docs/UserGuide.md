@@ -177,6 +177,7 @@ Successful command output:
 
 Adds a new employee to HRmanager and stores their employee details persistently - helping HR managers track new employees along with existing employees.
 * All compulsory fields (`n/`, `p/`, `e/`, `r/`, `d/`) must be provided exactly once. `t/TAG` is optional (0 or more).
+* Up to 200 employees can exist in HRmanager at the same time.
 
 Format: `add n/NAME p/PHONE e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​`
 
@@ -550,15 +551,15 @@ The text starting with `>` shows the command you type into HRmanager. Do not typ
 > delete 1
 ⚠ Warning! ⚠ Please confirm this action. Enter 'y' to proceed or 'n' to cancel.
 Action: Delete 1 employee(s)
-Impact: The selected employee record(s) will be permanently removed: John Doe.
+Impact: The selected employee record(s) will be permanently removed: john doe.
 
 > y
-Employee deleted successfully
+Deleted employee(s): john doe
 
 > edit 1 n/john
 ⚠ Warning! ⚠ Please confirm this action. Enter 'y' to proceed or 'n' to cancel.
 Action: Edit employee at index 1.
-Impact: Provided fields will overwrite existing employee details.
+Impact: Provided fields will overwrite existing employee details for: beatrice lim.
 
 > n
 Cancelled: edit employee details.
@@ -695,7 +696,7 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Help**   | `help`
 **List**   | `list`
-**Add**    | `add n/NAME p/PHONE e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com r/Software Engineer d/Engineering t/junior t/intern`
+**Add**    | `add n/NAME p/PHONE e/EMAIL r/ROLE d/DEPARTMENT [t/TAG]…​` <br> e.g., `add n/James Ho p/87559091 e/jamesho@example.com r/Software Engineer d/Engineering t/junior t/intern`
 **Search** | `search KEYWORD [MORE_KEYWORDS]...`<br> e.g., `search James @`
 **Stat** | `stat MODE`<br> e.g., `stat tag`, `stat dept`, `stat role`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [r/ROLE] [d/DEPARTMENT] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com d/Finance`
