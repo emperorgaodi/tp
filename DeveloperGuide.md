@@ -74,7 +74,7 @@ Each of the four main components (also shown in the diagram above),
 * defines its *API* in an `interface` with the same name as the Component.
 * implements its functionality using a concrete `{Component Name}Manager` class (which follows the corresponding API `interface` mentioned in the previous point.
 
-For example, the `Logic` component defines its API in the `Logic.java` interface and implements its functionality using the `LogicManager.java` class which follows the `Logic` interface. Other components interact with a given component through its interface rather than the concrete class (reason: to prevent outside component's being coupled to the implementation of a component), as illustrated in the (partial) class diagram below.
+For example, the `Logic` component defines its API in the `Logic.java` interface and implements its functionality using the `LogicManager.java` class which follows the `Logic` interface. Other components interact with a given component through its interface rather than the concrete class (reason: to prevent outside components being coupled to the implementation of a component), as illustrated in the (partial) class diagram below.
 
 <puml src="diagrams/ComponentManagers.puml" width="300" />
 
@@ -111,7 +111,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of the diagram.
 </box>
 
 How the `Logic` component works:
@@ -176,8 +176,6 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 This section describes some noteworthy details on how certain features are implemented.
 
 ### Undo feature
-
-#### Implementation
 
 The undo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
 
@@ -290,13 +288,11 @@ This means a command such as `search ali hr` returns employees whose fields cont
 
 ### Statistics Panel
 
-
 The statistics panel provides real-time workforce metrics displayed permanently on the right side of the application. This feature follows the **Separation of Concerns (SoC)** principle by separating data calculation from UI display.
 
 **Note:** The statistics panel supports three modes: TAG, DEPARTMENT, and ROLE. The displayed labels and statistics update according to the selected mode. All statistics are always computed from the full employee list (not the filtered list), regardless of any active search or filter.
 
 #### Design Overview
-
 
 The statistics feature consists of three main components:
 
@@ -455,8 +451,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 1a1. System displays an error message with the correct format.
     * 1a2. User provides new data.
     <br> *Steps 1a1-1a2 are repeated until the data provided are correct.*
-    <br> *Use case resumes from step 2.*
-
+    <br> *Use case resumes from step 2.*<br><br>
 
 **Use case 2 (UC2): Delete employee**<br>
 
@@ -485,8 +480,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 4a. User decides not to proceed with the deletion.
     * 4a1. System displays a response indicating that the command was aborted.
-    <br> *Use case ends.*
-
+    <br> *Use case ends.*<br><br>
 
 **Use case 3 (UC3): View employees**<br>
 
@@ -501,8 +495,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 2a. There are no employees stored in the system.
     <br></p>
     * 2a1. System displays an empty employee list.
-    <br> *Use case ends*
-
+    <br> *Use case ends*<br><br>
 
 **Use case 4 (UC4): Search for an employee**<br>
 
@@ -532,8 +525,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 4a. The user then wants to return to the full non-filtered list of employees.
     * 4a1. User requests to view all employees (UC3).
     * 4a2. The system shows the full non-filtered list of employees.
-    <br> *Use case ends.*
-
+    <br> *Use case ends.*<br><br>
 
 **Use case 5 (UC5): Edit an employee's details**<br>
 
@@ -572,36 +564,37 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 3a1. System displays a response indicating that the command was aborted.
     <br> *Use case ends.*<br><br>
 
-
 **Use case 6 (UC6): Cycle through previous executed commands**<br>
 
 **MSS**
 
-1.  User requests to {edit an employee's phone number}*. (Edit is an example. It can be any command)
-2.  System {edits the employee's phone number in the records}.
-3.  System {displays confirmation message}. (If the command is confirmable)
-4.  User suddenly recalls that they have forgotten to also edit the employee's email address.
-5.  User requests to cycle to the previous command.
-6.  System retrieves and displays the most recently executed command.
-7.  User modifies the command to edit the {email details} and executes the command.
-8.  System {edits the employee's email address in the records}.
+1.  User requests to execute a command.
+2.  System executes the command and stores it in command history.
+3.  User intends to reuse or modify a previous command.
+4.  User requests to cycle through previous commands.
+5.  System retrieves and prepares the most recent command from history.
+6.  User reviews the displayed command.
+7.  User enters the command.
     <br> *Use case ends.*
 
 **Extensions**
 
-* 2a. User has entered more than 10 unique commands.
-    * 2a1. The oldest command is discarded and can no longer be cycled through.
+* 2a. Command history limit reached.
+    * 2a1. The oldest command is discarded and can no longer be cycled through. The new latest executed command is saved.
+    <br> *Use case resumes from step 3.*<br><br>
+
+* 4a. There are no previous successfully executed commands.
+    * 4a1. System ignores the user's cycle request.
     <br> *Use case ends.*<br><br>
 
-* 5a. There are no previous successfully executed commands.
-    * 5a1. System does not respond to the user's cycle request.
-    <br> *Use case ends.*<br><br>
+* 5a. The user has executed multiple commands before the most recent one, and requests to cycle beyond the most recent command.
+    * 5a1. System retrieves and displays the next older command. If user has made a pending input, it is temporarily saved.
+    * 5a2. User can continue cycling to a later or more recent command until desired command is reached or history limit is hit.
+    <br> *Use case resumes from step 6.*<br><br>
 
-* 6a. The user has executed multiple commands before the recent one, and requests to cycle further back.
-    * 6a1. System continues to cycle through older executed commands. If there is already an input, it is saved.
-    * 6a2. User stops cycling at their desired past command or cycles forward to get back to a more recent or original command.
+* 6a. The command the user wants to make is not exactly the same as the pre-filled, previous command.
+    * 6a1. User modifies the command accordingly.
     <br> *Use case resumes from step 7.*<br><br>
-
 
 **Use case 7 (UC7): Importing employee data**<br>
 
@@ -627,8 +620,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
   <br> *Use case resumes from step 1.*<br><br>
 
 * 4a. User cancels import.
-  <br> *Use case ends.*
-
+  <br> *Use case ends.*<br><br>
 
 **Use case 8 (UC8): Exporting current employee data**<br>
 
@@ -649,7 +641,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 2b. File already exists at target destination.
     * 2b1. System displays an error message.
-    <br> *Use case resumes from step 1.*
+    <br> *Use case resumes from step 1.*<br><br>
 
 **Use case 9 (UC9): Undo previous command**<br>
 
@@ -702,6 +694,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 10. The system should be packaged as a single executable JAR file so that users can run the application without additional installation steps beyond having Java installed.
 11. The system inputs should be primarily through CLI with minimal reliance on mouse interactions, to cater to users who prefer keyboard-driven interfaces.
 
+
 ### Glossary
 
 * **HRmanager**: The name of our desktop application for managing employee records.
@@ -752,17 +745,17 @@ Given below are instructions to test the app manually.
     3. Test case: `add k n/Amy Choo p/22222222 e/amy@example.com r/Head of Office d/Operations t/friend` (Preamble is not a space)<br>
        Expected: The employee is not added. Error message for invalid command format, along with an example of the correct format, shown.
 
-    4. Test case: `add n/Bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Same exact name with existing entry, despite different details)<br>
+    4. Test case: `add n/Bob Choo p/11111111 e/bob@example.com r/Head of Operations d/Operations t/friend` (Same exact name with existing entry, despite different details)<br>
        Expected: The employee is not added. Duplicate error message is shown, indicating the employee (with same name) already exists.
 
-    5. Test case: `add n/bob Choo p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Same exact name with different case. Name check is case insensitive.)<br>
+    5. Test case: `add n/bob Choo p/11111111 e/bob@example.com r/Head of Operations d/Operations t/friend` (Same exact name with different case. Name check is case insensitive.)<br>
        Expected: The employee is not added. Duplicate error message is shown, indicating the employee (with same name) already exists.
 
     6. Test case: `add n/Lance Choo p/33333333 e/lance@example.com r/Head of HR d/Human Resources t/friend t/friend t/husband` (Multiple tags)<br>
        Expected: The employee is added. The success message is shown, along with the added details. Note that duplicate tags are accepted as one tag.
 
-    7. Test case: `add n/Justin p/33333333 e/lance@example.com r/Head of HR d/Human Resources` (No tags. Tags are optional)<br>
-       Expected: The employee is added. The success message is shown, along with the added details. Note that duplicate tags are accepted as one tag.
+    7. Test case: `add n/Justin p/33333333 e/lance@example.com r/Head of HR d/Human Resources` (No tags since they are optional)<br>
+       Expected: The employee is added. The success message is shown, along with the added details.
 
     8. Test case: `add n/Amy Cho n/Bob Cho p/11111111 e/bob@meme.com r/Head of Operations d/Operations t/friend` (Two names))<br>
        Expected: The employee is not added. Error messages for duplicated prefix shown.
@@ -803,7 +796,7 @@ Given below are instructions to test the app manually.
    6. Test case: `delete 1 2 999` (Prerequisite: there are less than 999 entries/employees) <br>
       Expected: No employee is deleted. Error details shown for an invalid index (because of 999).
 
-   7. All test cases, except `del` is used instead of `delete`. E.g.: `del 1`<br>
+   7. All test cases, except `del` is used instead of `delete`. E.g. `del 1`<br>
       Expected: Same exact behaviour as `delete`
 
    8. Test case: `delete -3`, `delete a`, `del 0` or similar (No index provided or index is invalid) <br>
@@ -818,7 +811,7 @@ Given below are instructions to test the app manually.
    11. Other incorrect delete commands to try: `delete x` (where x is larger than the list size), `del 1 2 a`, `del a`, `del 1 ` (trailing whitespace), `del #`, etc.<br>
       Expected: Similar error handling to above.
 
-2. Deleting a employee from a filtered list (search results)
+2. Deleting an employee from a filtered list (search results)
 
    1. Prerequisites: Execute `search KEYWORD` to filter the list (where KEYWORD returns one or more matching results based on searchable fields). Multiple search results shown.
 
@@ -982,7 +975,15 @@ Test the following for each confirmable command:
        Expected: The application closes.
 
     2. Test case: Enter `exit`. When prompted, enter `n`.<br>
-       Expected: The application remains open. Cancellation message is shown.
+       Expected: The application remains open. Cancellation message is shown.<br><br>
+
+5. Importing employee data (import command)
+
+    1. Test case: Enter a valid import command. When prompted, enter `y`.<br>
+       Expected: The employee list is imported from the specified file, overwriting existing data. Success message is shown with the number of employees imported and the file path.
+
+    2. Test case: Enter a valid import command. When prompted, enter `n`.<br>
+       Expected: The import is cancelled. No changes are made to the employee list. Cancellation message is shown.
 
 ### Testing Undo Workflows
 
