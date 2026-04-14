@@ -560,7 +560,7 @@ Deleted employee(s): john doe
 > edit 1 n/john doe
 ⚠ Warning! ⚠ Please confirm this action. Enter 'y' to proceed or 'n' to cancel.
 Action: Edit employee at index 1.
-Impact: Provided fields will overwrite existing employee details for: josh tan. //josh tan is the name of the employee at index 1
+Impact: Provided fields will overwrite existing employee details for: josh tan. // josh tan is the name of the employee at index 1
 
 > n
 Cancelled: edit employee details.
