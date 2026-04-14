@@ -569,31 +569,32 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 **MSS**
 
 1.  User requests to execute a command.
-2.  System executes the command.
-3.  User wants to make a similar command.
-4.  User requests to cycle to the previous command.
-5.  System retrieves and pre-writes the most recently executed command.
-6.  User enters the command.
+2.  System executes the command and stores it in command history.
+3.  User intends to reuse or modify a previous command.
+4.  User requests to cycle through previous commands.
+5.  System retrieves and prepares the most recent command from history.
+6.  User reviews the displayed command.
+7.  User enters the command.
     <br> *Use case ends.*
 
 **Extensions**
 
-* 2a. User has entered 10 unique commands. User then executes another command.
-    * 2a1. The oldest command is discarded and can no longer be cycled through. The new command is saved.
-    <br> *Use case ends.*<br><br>
+* 2a. Command history limit reached.
+    * 2a1. The oldest command is discarded and can no longer be cycled through. The new latest executed command is saved.
+    <br> *Use case resumes from step 3.*<br><br>
 
 * 4a. There are no previous successfully executed commands.
-    * 4a1. System does not respond to the user's cycle request.
+    * 4a1. System ignores the user's cycle request.
     <br> *Use case ends.*<br><br>
 
-* 5a. The user has executed multiple commands before the most recent one, and requests to cycle further back.
-    * 5a1. System continues to cycle through older executed commands. If there is already an input, it is saved.
-    * 5a2. User stops cycling at their desired past command or cycles to get back to a more recent or original command.
+* 5a. The user has executed multiple commands before the most recent one, and requests to cycle beyond the most recent command.
+    * 5a1. System retrieves and displays the next older command. If user has made a pending input, it is temporarily saved.
+    * 5a2. User can continue cycling to a later or more recent command until desired command is reached or history limit is hit.
     <br> *Use case resumes from step 6.*<br><br>
 
-* 5b. The command the user wants to make is not exactly the same as the pre-filled, previous command.
-    * 5b1. User modifies the command accordingly.
-    <br> *Use case resumes from step 6.*<br><br>
+* 6a. The command the user wants to make is not exactly the same as the pre-filled, previous command.
+    * 6a1. User modifies the command accordingly.
+    <br> *Use case resumes from step 7.*<br><br>
 
 **Use case 7 (UC7): Importing employee data**<br>
 
