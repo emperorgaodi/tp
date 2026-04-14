@@ -570,10 +570,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1.  User requests to execute a command.
 2.  System executes the command.
-4.  User wants to make a similar command.
-5.  User requests to cycle to the previous command, by pressing the relevant key.
-6.  System retrieves and pre-fills the command box with the most recently executed command.
-7.  User enters the command.
+3.  User wants to make a similar command.
+4.  User requests to cycle to the previous command, by pressing the relevant key.
+5.  System retrieves and pre-fills the command box with the most recently executed command.
+6.  User enters the command.
     <br> *Use case ends.*
 
 **Extensions**
@@ -582,18 +582,18 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 2a1. The oldest command is discarded and can no longer be cycled through. The new command is saved.
     <br> *Use case ends.*<br><br>
 
-* 5a. There are no previous successfully executed commands.
-    * 5a1. System does not respond to the user's key press (cycle request).
+* 4a. There are no previous successfully executed commands.
+    * 4a1. System does not respond to the user's key press (cycle request).
     <br> *Use case ends.*<br><br>
 
-* 6a. The user has executed multiple commands before the most recent one, and requests to cycle further back.
-    * 6a1. System continues to cycle through older executed commands. If there is already an input, it is saved.
-    * 6a2. User stops cycling at their desired past command or cycles forward to get back to a more recent or original command.
-    <br> *Use case resumes from step 7.*<br><br>
+* 5a. The user has executed multiple commands before the most recent one, and requests to cycle further back.
+    * 5a1. System continues to cycle through older executed commands. If there is already an input, it is saved.
+    * 5a2. User stops cycling at their desired past command or cycles forward to get back to a more recent or original command.
+    <br> *Use case resumes from step 6.*<br><br>
 
-* 6b. The command the user wants to make is not exactly the same as the pre-filled, previous command.
-    * 6b1. User modifies the command accordingly.
-    <br> *Use case resumes from step 7.*<br><br>
+* 5b. The command the user wants to make is not exactly the same as the pre-filled, previous command.
+    * 5b1. User modifies the command accordingly.
+    <br> *Use case resumes from step 6.*<br><br>
 
 **Use case 7 (UC7): Importing employee data**<br>
 
